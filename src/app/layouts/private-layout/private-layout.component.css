@@ -1,0 +1,9 @@
+.private-layout {
+    display: flex;
+}
+
+.main-content {
+    margin-left: 220px;
+    padding: 2rem;
+    width: 100%;
+}
