@@ -15,6 +15,7 @@ export class AuthService {
     this.supabase = createClient(environment.SUPABASE_URL, environment.SUPABASE_KEY);
     this.supabase.auth.getSession().then(({ data }) => {
       this.session = data.session;
+      console.log('✅ Restored session:', this.session);
     });
 
     this.supabase.auth.onAuthStateChange((_event, session) => {
