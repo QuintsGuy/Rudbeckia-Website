@@ -30,11 +30,14 @@ export class LoginComponent {
 
   async onSubmit(): Promise<void> {
     if (this.loginForm.invalid) return;
-    
     const { email, password, remember } = this.loginForm.value;
-    console.log(email, password, remember);
     this.loading = true;
-    this.loginError = await this.authService.login(email, password, remember);
+    
+    const error = await this.authService.login(email, password, remember);
+    if (error) {
+      alert(error);
+    }
+
     this.loading = false;
   }
 

@@ -12,6 +12,7 @@ module.exports = {
                 display: ['"Great Vibes"', ...defaultTheme.fontFamily.serif],
                 nav: ['"Marcellus"', ...defaultTheme.fontFamily.sans],
                 body: ['"Raleway"', ...defaultTheme.fontFamily.sans],
+                forum: ['"Forum"', ...defaultTheme.fontFamily.serif],
             }
         },
     },
