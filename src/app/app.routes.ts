@@ -8,11 +8,12 @@ import { ReviewsComponent } from './components/reviews/reviews.component';
 import { ContactComponent } from './components/contact/contact.component';
 import { LoginComponent } from './components/login/login.component';
 import { PrivateLayoutComponent } from './layouts/private-layout/private-layout.component';
-import { adminAuthGuard } from './guards/admin-auth.guard';
+import { AdminAuthGuard } from './guards/admin-auth.guard';
 import { DashboardComponent } from './components/admin/dashboard/dashboard.component';
 import { ManagePortfolioComponent } from './components/admin/manage-portfolio/manage-portfolio.component';
 import { ManageReviewsComponent } from './components/admin/manage-reviews/manage-reviews.component';
 import { UserManagementComponent } from './components/admin/user-management/user-management.component';
+import { PasswordRecoveryComponent } from './components/password-recovery/password-recovery.component';
 
 export const routes: Routes = [
     {
@@ -26,14 +27,15 @@ export const routes: Routes = [
             { path: 'reviews', component: ReviewsComponent },
             { path: 'contact', component: ContactComponent },
             { path: 'login', component: LoginComponent },
+            { path: 'password-recovery', component: PasswordRecoveryComponent},
         ]
     },
     {
         path: 'admin',
         component: PrivateLayoutComponent,
-        canActivateChild: [adminAuthGuard],
+        canActivateChild: [AdminAuthGuard],
         children: [
-            { path: '', component: DashboardComponent },
+            { path: 'dashboard', component: DashboardComponent },
             { path: 'portfolio', component: ManagePortfolioComponent },
             { path: 'reviews', component: ManageReviewsComponent },
             { path: 'users', component: UserManagementComponent },
