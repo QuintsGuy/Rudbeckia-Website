@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, CanActivateChild, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { environment } from '../../environments/environment.dev';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,11 @@ export class AdminAuthGuard implements CanActivate, CanActivateChild {
   }
 
   private async checkAdminAccess(): Promise<boolean> {
+    if (environment.bypassAuth) {
+      console.warn('⚠️ Auth guard bypassed for development');
+      return true;
+    }
+    
     const isLoggedIn = this.authService.isLoggedIn();
     const isAdmin = await this.authService.isAdmin();
 

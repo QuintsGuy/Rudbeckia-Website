@@ -14,6 +14,12 @@ import { ManagePortfolioComponent } from './components/admin/manage-portfolio/ma
 import { ManageReviewsComponent } from './components/admin/manage-reviews/manage-reviews.component';
 import { UserManagementComponent } from './components/admin/user-management/user-management.component';
 import { PasswordRecoveryComponent } from './components/password-recovery/password-recovery.component';
+import { CalendarComponent } from './components/admin/calendar/calendar.component';
+import { ProposalsComponent } from './components/admin/proposals/proposals.component';
+import { ManageAboutComponent } from './components/admin/manage-about/manage-about.component';
+import { ManageServicesComponent } from './components/admin/manage-services/manage-services.component';
+import { InboxComponent } from './components/admin/inbox/inbox.component';
+import { ManageSettingsComponent } from './components/admin/manage-settings/manage-settings.component';
 
 export const routes: Routes = [
     {
@@ -36,9 +42,15 @@ export const routes: Routes = [
         canActivateChild: [AdminAuthGuard],
         children: [
             { path: 'dashboard', component: DashboardComponent },
+            { path: 'calendar', component: CalendarComponent },
+            { path: 'proposals', component: ProposalsComponent },
+            { path: 'about', component: ManageAboutComponent },
             { path: 'portfolio', component: ManagePortfolioComponent },
             { path: 'reviews', component: ManageReviewsComponent },
+            { path: 'services', component: ManageServicesComponent },
             { path: 'users', component: UserManagementComponent },
+            { path: 'inbox', component: InboxComponent },
+            { path: 'settings', component: ManageSettingsComponent },
         ]
     }
 ];
