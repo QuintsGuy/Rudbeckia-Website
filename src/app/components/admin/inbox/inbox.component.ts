@@ -24,6 +24,8 @@ export class InboxComponent implements OnInit {
   currentPage: number = 1;
   pageSize: number = 10;
   totalRecords: number = 0;
+
+  selectedIds: Set<number> = new Set();
   
   searchForm: FormGroup = new FormGroup({
     searchTerm: new FormControl('')
@@ -98,6 +100,69 @@ export class InboxComponent implements OnInit {
     if (this.currentPage > 1) {
       this.currentPage--;
       this.fetchMessages();
+    }
+  }
+
+  toggleSelection(id: number, event: Event) {
+    const checkbox = event.target as HTMLInputElement;
+    if (checkbox?.checked) {
+      this.selectedIds.add(id);
+    } else {
+      this.selectedIds.delete(id);
+    }
+  }
+
+  isAnySelected(): boolean {
+    return this.selectedIds.size > 0;
+  }
+
+  async bulkMarkUnread() {
+    if (!this.isAnySelected()) return;
+
+    const { error } = await this.supabase.getClient()
+      .from('contact_msg')
+      .update({ is_read: false })
+      .in('id', Array.from(this.selectedIds));
+
+    if (error) {
+      console.error('Failed to mark as unread:', error.message);
+    } else {
+      this.selectedIds.clear();
+      await this.fetchMessages();
+    }
+  }
+
+  async bulkMarkRead() {
+    if (!this.isAnySelected()) return;
+
+    const { error } = await this.supabase.getClient()
+      .from('contact_msg')
+      .update({ is_read: true })
+      .in('id', Array.from(this.selectedIds));
+
+    if (error) {
+      console.error('Failed to mark as read:', error.message);
+    } else {
+      this.selectedIds.clear();
+      await this.fetchMessages();
+    }
+  }
+
+  async bulkDelete() {
+    if (!this.isAnySelected()) return;
+
+    if (!confirm('Are you sure you want to permanently delete the selected messages?')) return;
+
+    const { error } = await this.supabase.getClient()
+      .from('contact_msg')
+      .delete()
+      .in('id', Array.from(this.selectedIds));
+
+    if (error) {
+      console.error('Failed to delete messages:', error.message);
+    } else {
+      this.selectedIds.clear();
+      await this.fetchMessages();
     }
   }
 
