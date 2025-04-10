@@ -1,6 +1,8 @@
+declare const NG_ENV: any;
+
 export const environment = {
     production: true,
-    SUPABASE_URL: process.env['SUPABASE_URL'] || '',
-    SUPABASE_KEY: process.env['SUPABASE_KEY'] || '',
-    bypassAuth: process.env['BYPASS_AUTH'] === 'false'
+    SUPABASE_URL: NG_ENV.SUPABASE_URL,
+    SUPABASE_KEY: NG_ENV.SUPABASE_KEY,
+    BYPASS_AUTH: NG_ENV.BYPASS_AUTH === 'true'
 };
