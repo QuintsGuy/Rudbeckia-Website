@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { SupabaseClient, createClient, Session } from '@supabase/supabase-js';
-import { environment } from '../../environments/environment.dev';
+import { environment } from '../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
