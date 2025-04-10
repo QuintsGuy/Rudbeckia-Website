@@ -12,6 +12,7 @@ import { SupabaseService } from '../../services/supabase.service';
 })
 export class ContactComponent {
   contactForm: FormGroup;
+  showSubmitConfirmModal: boolean = false;
 
   constructor(private fb: FormBuilder, private supabaseService: SupabaseService) {
     this.contactForm = this.fb.group({
@@ -67,7 +68,7 @@ export class ContactComponent {
     if (error) {
       console.error('❌ Error submitting contact form:', error.message);
     } else {
-      alert('✅ Message sent successfully!');
+      this.showSubmitConfirmModal = true;
       this.contactForm.reset();
     }
   }
@@ -94,5 +95,8 @@ export class ContactComponent {
     const formatted = '$' + parseInt(input, 10).toLocaleString();
     event.target.value = formatted;
   }
-  
+
+  closeConfirmModal() {
+    this.showSubmitConfirmModal = false;
+  }
 }
