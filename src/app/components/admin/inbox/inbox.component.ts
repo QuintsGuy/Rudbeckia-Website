@@ -26,6 +26,7 @@ export class InboxComponent implements OnInit {
   totalRecords: number = 0;
 
   selectedIds: Set<number> = new Set();
+  showDeleteConfirmModal: boolean = false;
   
   searchForm: FormGroup = new FormGroup({
     searchTerm: new FormControl('')
@@ -148,10 +149,14 @@ export class InboxComponent implements OnInit {
     }
   }
 
+  showDeleteModal() {
+    if (this.isAnySelected()) {
+      this.showDeleteConfirmModal = true;
+    }
+  }
+
   async bulkDelete() {
     if (!this.isAnySelected()) return;
-
-    if (!confirm('Are you sure you want to permanently delete the selected messages?')) return;
 
     const { error } = await this.supabase.getClient()
       .from('contact_msg')
@@ -164,6 +169,12 @@ export class InboxComponent implements OnInit {
       this.selectedIds.clear();
       await this.fetchMessages();
     }
+
+    this.showDeleteConfirmModal = false;
+  }
+
+  cancelDelete() {
+    this.showDeleteConfirmModal = false;
   }
 
   async openMessageModal(msg: any) {

@@ -1,7 +1,7 @@
 // src/app/services/supabase.service.ts
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
-import { environment } from '../../environments/environment.dev';
+import { environment } from '../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
