@@ -242,8 +242,7 @@ export class InboxComponent implements OnInit {
         coordinator: msg.coordinator,
         coordinator_email: msg.coordinator_email,
         message: msg.message,
-        status: 'Accepted',
-        to_do: 'Draft Proposal'
+        status: 'Approved',
       }]);
 
     if (updateError || insertError) {

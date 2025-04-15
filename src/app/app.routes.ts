@@ -20,6 +20,7 @@ import { ManageAboutComponent } from './components/admin/manage-about/manage-abo
 import { ManageServicesComponent } from './components/admin/manage-services/manage-services.component';
 import { InboxComponent } from './components/admin/inbox/inbox.component';
 import { ManageSettingsComponent } from './components/admin/manage-settings/manage-settings.component';
+import { EventsComponent } from './components/admin/events/events.component';
 
 export const routes: Routes = [
     {
@@ -51,6 +52,7 @@ export const routes: Routes = [
             { path: 'users', component: UserManagementComponent },
             { path: 'inbox', component: InboxComponent },
             { path: 'settings', component: ManageSettingsComponent },
+            { path: 'events', component: EventsComponent },
         ]
     }
 ];
