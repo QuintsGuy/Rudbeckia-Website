@@ -26,7 +26,6 @@ export class EventsComponent {
   totalRecords: number = 0;
 
   selectedIds: Set<number> = new Set();
-  showDeleteConfirmModal: boolean = false;
 
   searchForm: FormGroup = new FormGroup({
     searchTerm: new FormControl('')
@@ -51,6 +50,9 @@ export class EventsComponent {
   proposalFile: File | null = null;
   proposalUploadEnabled: boolean = false;
   @ViewChild('proposalFileInput') proposalFileInput?: ElementRef<HTMLInputElement>;
+
+  toastMessage: string = '';
+  toastType: 'success' | 'error' = 'success';
 
   constructor(private supabase: SupabaseService, private router: Router) {}
 
@@ -97,7 +99,8 @@ export class EventsComponent {
     const { data, count, error } = await query.order('created_at', { ascending: false });
     
     if (error) {
-      console.error('Failed to load messages:', error.message);
+      console.error('Failed to load events:', error.message);
+      this.showToast('Failed to load events:' + error.message, 'error');
     } else {
       this.events = data || [];
       this.totalRecords = count || 0;
@@ -125,29 +128,6 @@ export class EventsComponent {
     }
   }
 
-  toggleSelection(id: number, event: Event) {
-    const checkbox = event.target as HTMLInputElement;
-    if (checkbox?.checked) {
-      this.selectedIds.add(id);
-    } else {
-      this.selectedIds.delete(id);
-    }
-  }
-
-  isAnySelected(): boolean {
-    return this.selectedIds.size > 0;
-  }
-
-  showDeleteModal() {
-    if (this.isAnySelected()) {
-      this.showDeleteConfirmModal = true;
-    }
-  }
-
-  cancelDelete() {
-    this.showDeleteConfirmModal = false;
-  }
-
   async openEventModal(event: any) {
     this.selectedEvent = event;
 
@@ -158,6 +138,7 @@ export class EventsComponent {
 
     if (error) {
       console.error('Could not open event modal:', error.message);
+      this.showToast('Could not open event modal:' + error.message, 'success');
     }
     
     const modal = document.getElementById('viewEventModal');
@@ -215,9 +196,11 @@ export class EventsComponent {
   
     if (error) {
       console.error('Failed to update event:', error.message);
+      this.showToast('Failed to update event: ' + error.message, 'error');
     } else {
       await this.fetchEvents(); // reload updated data
       this.closeModifyEventModal();
+      this.showToast('Event modified successfully!', 'success');
     }
   
     this.actionLoading = false;
@@ -247,7 +230,7 @@ export class EventsComponent {
       .eq('id', event.id);
 
     if (error) {
-      console.error('Could not open event modal:', error.message);
+      this.showToast('Could not open event modal: ' + error.message, 'error');
     }
     
     const modal = document.getElementById('proposalModal');
@@ -301,6 +284,7 @@ export class EventsComponent {
   
     if (uploadError) {
       alert('Upload failed: ' + uploadError.message);
+      this.showToast('Upload failed: ' + uploadError.message, 'error');
       this.actionLoading = false;
       return;
     }
@@ -311,15 +295,20 @@ export class EventsComponent {
   
     const { error: updateError } = await this.supabase.getClient()
       .from('events')
-      .update({ proposal_pdf_url: publicUrl })
+      .update({ 
+        proposal_pdf_url: publicUrl,
+        status: 'Client Review'
+      })
       .eq('id', this.selectedEvent.id);
   
     if (updateError) {
-      alert('Database update failed: ' + updateError.message);
+      this.showToast('Database update failed: ' + updateError.message, 'error');
     } else {
       this.selectedEvent.proposal_pdf_url = publicUrl;
+      this.selectedEvent.status = 'Client Review';
       await this.fetchEvents();
       this.closeProposalModal();
+      this.showToast('Proposal uploaded successfully!', 'success');
     }
   
     this.proposalFile = null;
@@ -351,6 +340,30 @@ export class EventsComponent {
           this.proposalFileInput.nativeElement.value = '';
         }
       }, 200);
+    }
+  }
+
+  showToast(message: string, type: 'success' | 'error' = 'success') {
+    const toast = document.getElementById('toast');
+    this.toastMessage = message;
+    this.toastType = type;
+  
+    if (toast) {
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('opacity-100'), 50);
+  
+      setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        setTimeout(() => toast.classList.add('hidden'), 500);
+      }, 4000);
+    }
+  }
+
+  dismissToast() {
+    const toast = document.getElementById('toast');
+    if (toast) {
+      toast.classList.remove('opacity-100');
+      setTimeout(() => toast.classList.add('hidden'), 500);
     }
   }
 }
