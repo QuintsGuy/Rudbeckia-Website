@@ -45,28 +45,64 @@ export class ContactComponent {
     }
 
     const formValue = this.contactForm.value;
-    const fullName = `${formValue.firstName} ${formValue.lastName}`;
-    console.log(formValue);
 
-    const { error } = await this.supabaseService.getClient()
-      .from('contact_msg')
-      .insert([{
-        name: fullName,
+    const { data: clientData, error: clientError } = await this.supabaseService.getClient()
+      .from('clients')
+      .upsert([{
+        first_name: formValue.firstName,
+        last_name: formValue.lastName,
         email: formValue.email,
-        phone: formValue.phone,
+        phone: formValue.phone
+      }], { onConflict: 'email' })
+      .select('client_id')
+      .single();
+
+    if (clientError) {
+      console.error('❌ Client insert error:', clientError.message);
+      alert('Error submitting personal data. Please try again.');
+      return;
+    }
+
+    let coordinatorId = null;
+    if (formValue.coordinator && formValue.coordinatorEmail) {
+      const { data: coordinatorData, error: coordinatorError } = await this.supabaseService.getClient()
+        .from('coordinators')
+        .upsert([{
+          name: formValue.coordinator,
+          email: formValue.coordinatorEmail,
+          updated_at: new Date().toISOString()
+        }], { onConflict: 'email' })
+        .select('coordinator_id')
+        .single();
+
+      if (coordinatorError) {
+        console.error('❌ Coordinator insert error:', coordinatorError.message);
+        alert('Error submitting coordinator info. Please try again.');
+        return;
+      }
+
+      coordinatorId = coordinatorData.coordinator_id;
+    }
+
+    // Insert into inquiries
+    const { error: inquiryError } = await this.supabaseService.getClient()
+      .from('inquiries')
+      .insert([{
+        client_id: clientData.client_id,
+        coordinator_id: coordinatorId,
         event_date: formValue.eventDate,
         event_type: formValue.eventType,
         venue: formValue.venue,
         budget: formValue.budget,
-        coordinator: formValue.coordinator,
-        coordinator_email: formValue.coordinatorEmail,
         pinterest_url: formValue.pinterest,
         message: formValue.message,
         is_read: false
-      }]);
-    
-    if (error) {
-      console.error('❌ Error submitting contact form:', error.message);
+    }]);
+
+    // Handle any errors
+    if (inquiryError) {
+      console.error('❌ Error submitting contact form:', inquiryError);
+      alert('Error submitting event details. Please try again.');
     } else {
       this.showSubmitConfirmModal = true;
       this.contactForm.reset();
@@ -74,7 +110,14 @@ export class ContactComponent {
   }
 
   formatPhoneNumber(event: any) {
-    let input = event.target.value.replace(/\D/g, '').substring(0, 10); // Only digits
+    let input = event.target.value.replace(/\D/g, ''); // Remove non-digits
+  
+    // Strip leading 1 if it's an 11-digit US number
+    if (input.length === 11 && input.startsWith('1')) {
+      input = input.substring(1);
+    }
+  
+    input = input.substring(0, 10); // Trim to 10 digits max
   
     let formatted = '';
     if (input.length > 6) {
@@ -82,18 +125,31 @@ export class ContactComponent {
     } else if (input.length > 3) {
       formatted = `(${input.slice(0, 3)}) ${input.slice(3)}`;
     } else if (input.length > 0) {
-      formatted = `(${input}`;
+      formatted = `(${input})`;
     }
   
-    event.target.value = formatted; // updates what user sees
+    event.target.value = formatted;
+  
+    // Optionally: Update raw phone number in form control if needed
+    this.contactForm.get('phone')?.setValue(input);
   }
-
+  
   formatBudget(event: any) {
     let input = event.target.value.replace(/\D/g, '');
-    if (!input) return;
+    
+    if (!input) {
+      this.contactForm.get('budget')?.setValue(null);
+      return;
+    }
   
-    const formatted = '$' + parseInt(input, 10).toLocaleString();
+    const numberValue = parseInt(input, 10);
+    const formatted = '$' + numberValue.toLocaleString();
+  
+    // Show formatted value in input
     event.target.value = formatted;
+  
+    // Set raw numeric value in form control
+    this.contactForm.get('budget')?.setValue(numberValue);
   }
 
   closeConfirmModal() {
