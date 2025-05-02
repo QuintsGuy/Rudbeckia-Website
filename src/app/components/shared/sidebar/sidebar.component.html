@@ -1,0 +1,84 @@
+<button data-drawer-target="sidebar-team-switch" data-drawer-toggle="sidebar-team-switch" aria-controls="sidebar-team-switch" type="button" class="inline-flex items-center p-2 mt-2 ml-3 text-sm rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
+    <span class="sr-only">Open sidebar</span>
+    <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
+    </svg>
+</button>
+
+<aside id="sidebar-team-switch" class="fixed font-body top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+    <div class="overflow-y-auto py-5 px-3 h-full">
+        <div class="flex justify-between items-center w-full rounded-lg focus:outline-none focus:ring-4 focus:ring-gray-200">
+            <div class="flex items-center mx-auto">  
+                <img src="assets/images/landing/Logo_inverted.png" alt="Rudbeckia Logo" style="height: 180px;"/>
+            </div>
+        </div>
+        <ul class="mt-5 space-y-2">
+            <li>
+                <a routerLink="/private/dashboard" class="flex items-center p-2 text-base font-normal rounded-lg hover:bg-white/20 group">
+                    <svg aria-hidden="true" class="w-6 h-6 transition duration-75 group-hover:text-gray-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
+                    <span class="ml-3">Home</span>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/private/inbox" class="flex items-center p-2 text-base font-normal rounded-lg hover:bg-white/20 group">
+                    <svg aria-hidden="true" class="flex-shrink-0 w-6 h-6 transition duration-75 group-hover:text-gray-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M8.707 7.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l2-2a1 1 0 00-1.414-1.414L11 7.586V3a1 1 0 10-2 0v4.586l-.293-.293z"></path><path d="M3 5a2 2 0 012-2h1a1 1 0 010 2H5v7h2l1 2h4l1-2h2V5h-1a1 1 0 110-2h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path></svg>
+                    <span class="flex-1 ml-3 whitespace-nowrap">Inbox</span>
+                    <span class="inline-flex justify-center items-center w-5 h-5 text-xs font-semibold rounded-full text-primary-800">
+                        {{ unreadCount }}  
+                    </span>
+                </a>
+            </li>
+            <li>
+                <a routerLink="/private/events" class="flex items-center p-2 text-base font-normal rounded-lg hover:bg-white/20 group">
+                    <svg aria-hidden="true" class="w-6 h-6 transition duration-75 group-hover:text-gray-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                    <span class="ml-3">Events</span>
+                </a>
+            </li>
+            <!-- <li>
+                <a routerLink="/private/proposals" class="flex items-center p-2 text-base font-normal rounded-lg hover:bg-white/20 group">
+                    <svg aria-hidden="true" class="w-6 h-6 transition duration-75 group-hover:text-gray-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                    <span class="ml-3">Proposals</span>
+                </a>
+            </li> -->
+            <li>
+                <a routerLink="/private/calendar" class="flex items-center p-2 text-base font-normal rounded-lg hover:bg-white/20 group">
+                    <svg aria-hidden="true" class="w-6 h-6 transition duration-75 group-hover:text-gray-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.5a1.5 1.5 0 01-3 0V6z" clip-rule="evenodd"></path><path d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 002-2v-2z"></path></svg>
+                    <span class="ml-3">Calendar</span>
+                </a>
+            </li>
+            <li>
+                <button type="button" class="flex items-center p-2 w-full text-base font-normal rounded-lg transition duration-75 group hover:bg-white/20" aria-controls="dropdown-tasks" data-collapse-toggle="dropdown-tasks">
+                    <svg aria-hidden="true" class="flex-shrink-0 w-6 h-6 transition duration-75 group-hover:text-gray-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path></svg>
+                    <span class="flex-1 ml-3 text-left whitespace-nowrap">Manage Website</span>
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                </button>
+                <ul id="dropdown-tasks" class="hidden py-2 space-y-2">
+                    <li>
+                        <a routerLink="/private/about" class="flex items-center p-1 pl-11 w-full text-sm font-normal rounded-lg transition duration-75 group hover:bg-white/20">About</a>
+                    </li>
+                    <li>
+                        <a routerLink="/private/portfolio" class="flex items-center p-1 pl-11 w-full text-sm font-normal rounded-lg transition duration-75 group hover:bg-white/20">Portfolio</a>
+                    </li>
+                    <li>
+                        <a routerLink="/private/reviews" class="flex items-center p-1 pl-11 w-full text-sm font-normal rounded-lg transition duration-75 group hover:bg-white/20">Reviews</a>
+                    </li>
+                    <li>
+                        <a routerLink="/private/services" class="flex items-center p-1 pl-11 w-full text-sm font-normal rounded-lg transition duration-75 group hover:bg-white/20">Services</a>
+                    </li>
+                    <li>
+                        <a routerLink="/private/users" class="flex items-center p-1 pl-11 w-full text-sm font-normal rounded-lg transition duration-75 group hover:bg-white/20">User Management</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="absolute bottom-0 left-0 justify-center p-4 w-full text-white z-20">
+        <a (click)="Logout()" class="flex cursor-pointer p-2 items-center text-md rounded-lg hover:bg-white/20 group">
+            <svg aria-hidden="true" class="flex-shrink-0 w-6 h-6 transition duration-75 group-hover:text-gray-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="ml-2">Logout</span>
+        </a>
+    </div>
+</aside>

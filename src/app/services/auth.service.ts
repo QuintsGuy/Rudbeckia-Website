@@ -23,7 +23,7 @@ export class AuthService {
     });
   }
 
-  async login(email: string, password: string, remember: boolean): Promise<string | null> {
+  async login(email: string, password: string): Promise<string | null> {
     const { data, error } = await this.supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
@@ -38,16 +38,6 @@ export class AuthService {
       await this.supabase.auth.updateUser({ data: { isAdmin: true } });
     }
 
-    // Set session persistence
-    if (!remember) {
-      // Move session from localStorage to sessionStorage
-      const sessionStr = localStorage.getItem('supabase.auth.token');
-      if (sessionStr) {
-        sessionStorage.setItem('supabase.auth.token', sessionStr);
-        localStorage.removeItem('supabase.auth.token');
-      }
-    }
-
     // Optional: manually refresh the session (e.g., get latest JWT)
     const { data: refreshedSession } = await this.supabase.auth.getSession();
     const jwt = refreshedSession.session?.access_token;
@@ -55,18 +45,29 @@ export class AuthService {
 
     console.log('JWT: ', jwt);
 
-    this.router.navigate(['/admin/dashboard']);
+    this.router.navigate(['/private/dashboard']);
     return null;
   }
 
-  async signInWithGoogle(): Promise<void> {
-    await this.supabase.auth.signInWithOAuth({ provider: 'google' });
+  async verifyPasscode(passcode: string) {
+    const { data, error } = await this.supabase
+      .from('passcodes')
+      .select('passcode')
+      .eq('passcode', passcode)
+      .single();
+
+    if (error || !data) {
+      console.log('Error verifying passcode: ', error);
+      return;
+    }
+    
+    this.router.navigate(['/view/proposal'], { state: { passcode: data } });
   }
 
   logout(): void {
     this.supabase.auth.signOut();
     this.session = null;
-    this.router.navigate(['/login']);
+    this.router.navigate(['auth/login']);
   }
 
   getSession(): Session | null {

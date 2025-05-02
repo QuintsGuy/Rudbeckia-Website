@@ -1,0 +1,515 @@
+<section 
+    style="background-image: url('assets/images/landing/IMG_0695.jpg');" 
+    class="bg-no-repeat bg-cover bg-center py-3 sm:py-8 min-h-[100vh]"
+>
+    <div class="absolute inset-0"></div>
+    <div class="mx-auto max-w-screen-3xl lg:px-12">
+        <div class="relative shadow-md sm:rounded-lg overflow-hidden" style="background-color: rgba(195, 145, 110, 0.88); backdrop-filter: blur(5px); border: 3px solid rgb(255, 255, 255);">
+            <div class="border-b mx-4">
+                <div class="flex items-center justify-between space-x-4 pt-3">
+                    <div class="flex-1 flex items-center space-x-3">
+                        <h5 class="font-medium text-4xl text-white font-display">Events Manager</h5>
+                    </div>
+                </div>
+                <div class="flex flex-col-reverse md:flex-row items-center justify-between md:space-x-4 py-3">
+                    <div class="w-full lg:w-2/3 flex flex-col space-y-3 md:space-y-0 md:flex-row md:items-center">
+                        <form [formGroup]="searchForm" class="w-full md:max-w-sm flex-1 md:mr-4 font-body">
+                            <label for="default-search" class="text-sm font-medium text-gray-900 sr-only">Search</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <svg aria-hidden="true" class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </div>
+                                <input 
+                                    type="search" formControlName="searchTerm" name="search" id="default-search" 
+                                    class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500" 
+                                    placeholder="Search..."
+                                >
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="mx-4 pb-3 flex flex-wrap font-body">
+                <div class="hidden md:flex items-center text-sm font-medium text-white mr-4 mt-3">Show only:</div>
+                <div class="flex flex-wrap">
+                    <div class="flex items-center mt-3 mr-4">
+                        <input 
+                            id="all" type="radio" name="show-only" 
+                            class="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-1"
+                            (change)="onFilterChange('All')"
+                            [checked]="filterStatus === 'All'"
+                        >
+                        <label for="all" class="ml-2 text-sm text-white font-medium">All</label>
+                    </div>
+                    <div class="flex items-center mr-4 mt-3">
+                        <input 
+                            id="Approved" type="radio" name="show-only" 
+                            class="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-1"
+                            (change)="onFilterChange('Approved')"
+                            [checked]="filterStatus === 'Approved'"
+                        >
+                        <label for="new" class="ml-2 text-sm text-white font-medium">Approved</label>
+                    </div>
+                    <div class="flex items-center mr-4 mt-3">
+                        <input 
+                            id="review" type="radio" name="show-only" 
+                            class="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-1"
+                            (change)="onFilterChange('Client Review')"
+                            [checked]="filterStatus === 'Client Review'"
+                        >
+                        <label for="in-progress" class="ml-2 text-sm text-white font-medium">Client Review</label>
+                    </div>
+                    <div class="flex items-center mr-4 mt-3">
+                        <input 
+                            id="proposal-declined" type="radio" name="show-only" 
+                            class="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-1"
+                            (change)="onFilterChange('Proposal Declined')"
+                            [checked]="filterStatus === 'Proposal Declined'"
+                        >
+                        <label for="in-progress" class="ml-2 text-sm text-white font-medium">Proposal Declined</label>
+                    </div>
+                    <div class="flex items-center mr-4 mt-3">
+                        <input 
+                            id="scheduled" type="radio" name="show-only" 
+                            class="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-1"
+                            (change)="onFilterChange('Scheduled')"
+                            [checked]="filterStatus === 'Scheduled'"
+                        >
+                        <label for="past" class="ml-2 text-sm font-medium text-white">Scheduled</label>
+                    </div>
+                    <div class="flex items-center mr-4 mt-3">
+                        <input 
+                            id="complete" type="radio" name="show-only" 
+                            class="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-1"
+                            (change)="onFilterChange('Complete')"
+                            [checked]="filterStatus === 'Complete'"
+                        >
+                        <label for="past" class="ml-2 text-sm font-medium text-white">Complete</label>
+                    </div>
+                    <div class="flex items-center mr-4 mt-3">
+                        <input 
+                            id="cancelled" type="radio" name="show-only" 
+                            class="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-1"
+                            (change)="onFilterChange('Cancelled')"
+                            [checked]="filterStatus === 'Cancelled'"
+                        >
+                        <label for="past" class="ml-2 text-sm font-medium text-white">Cancelled</label>
+                    </div>
+                </div>
+            </div>
+            <div class="overflow-x-auto font-body text-white">
+                <table class="w-full text-sm text-left">
+                    <thead class="text-xs uppercase">
+                        <tr>
+                            <th scope="col" class="pl-12 py-3">Event Type</th>
+                            <th scope="col" class="px-4 py-3">Client</th>
+                            <th scope="col" class="px-4 py-3">Event Date</th>
+                            <th scope="col" class="px-4 py-3">Venue</th>
+                            <th scope="col" class="px-4 py-3">Budget</th>
+                            <th scope="col" class="px-4 py-3">Coordinator</th>
+                            <th scope="col" class="px-4 py-3">Status</th>
+                            <th scope="col" class="px-4 py-3">Action</th>
+                            <th scope="col" class="px-4 py-3">Modify</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr  
+                            *ngFor="let event of events"
+                            class="border-b bg-[rgb(255,255,255)] text-black hover:bg-gray-200"
+                        >
+                            <td class="pl-12 px-4 py-3">
+                                {{ event.event_type | titlecase }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ event.client.first_name }} {{ event.client.last_name }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ event.event_date }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ event.venue }}
+                            </td>
+                            <td class="px-4 py-3">
+                                ${{ event.budget }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ event.coordinator.name }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ event.status | titlecase }}
+                            </td>
+                            <td class="px-4 py-3">
+                                {{ event.todo | titlecase }}
+                            </td>
+                            <td class="pl-4 py-3 flex gap-2">
+                                <button (click)="openEventModal(event)" class="px-3 py-1 text-xs text-white bg-blue-600 rounded hover:bg-blue-700">Details</button>
+                                <button (click)="openProposalModal(event)" class="px-3 py-1 text-xs text-white bg-green-600 rounded hover:bg-green-700">Proposal</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <nav class="flex flex-col text-white font-body md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4" aria-label="Table navigation">
+                <span class="text-sm font-normal text-white">
+                    Showing
+                    <span class="font-semibold">
+                      {{ (currentPage - 1) * pageSize + 1 }} - 
+                        {{
+                            (currentPage * pageSize) > totalRecords
+                            ? totalRecords
+                            : currentPage * pageSize
+                        }}
+                    </span>
+                    of
+                    <span class="font-semibold">{{ totalRecords }}</span>
+                </span>
+                <ul class="inline-flex text-black items-stretch -space-x-px">
+                    <li>
+                        <button (click)="prevPage()" [disabled]="currentPage === 1"
+                            class="px-3 py-1.5 cursor-pointer text-sm border bg-white hover:bg-gray-100 rounded-l-lg">
+                            Prev
+                        </button>
+                    </li>
+                    <li>
+                        <button (click)="nextPage()" [disabled]="currentPage * pageSize >= totalRecords"
+                            class="px-3 py-1.5 text-sm cursor-pointer border bg-white hover:bg-gray-100 rounded-r-lg">
+                            Next
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <!-- View Event Modal -->
+    <div 
+        id="viewEventModal" 
+        tabindex="-1" 
+        class="hidden fixed inset-0 z-50 overflow-y-auto transition-opacity duration-300 ease-in-out text-black font-body"
+    >
+        <div class="modal-wrapper opacity-0 scale-95 transition-all duration-300 ease-out flex items-center justify-center min-h-screen">
+            <div class="relative w-full max-w-2xl p-6 bg-white rounded-lg shadow-lg border-4 border-[rgb(195,145,110)]">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-xl font-bold text-[rgb(195,145,110)]">
+                            {{ selectedEvent?.client.first_name }} {{ selectedEvent?.client.last_name }}
+                        </h3>
+                    </div>
+                    <button
+                        type="button"
+                        class="hover:text-gray-900"
+                        (click)="closeEventModal()"
+                    >
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414 5.707 15.707a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 text-md text-gray-700">
+                    <p><strong class="text-[rgb(195,145,110)]">Status:</strong> {{ selectedEvent?.status }}</p>
+                    <p><strong class="text-[rgb(195,145,110)]">Passcode:</strong> {{ selectedEvent?.passcode.passcode }}</p>
+                    <p><strong class="text-[rgb(195,145,110)]">Client Email:</strong> {{ selectedEvent?.client.email | titlecase }}</p>
+                    <p><strong class="text-[rgb(195,145,110)]">Phone:</strong> {{ selectedEvent?.client.phone }}</p>
+                    <p><strong class="text-[rgb(195,145,110)]">Event Type:</strong> {{ selectedEvent?.event_type | titlecase }}</p>
+                    <p><strong class="text-[rgb(195,145,110)]">Event Date:</strong> {{ selectedEvent?.event_date }}</p>
+                    <p><strong class="text-[rgb(195,145,110)]">Venue:</strong> {{ selectedEvent?.venue }}</p>
+                    <p><strong class="text-[rgb(195,145,110)]">Budget:</strong> {{ selectedEvent?.budget }}</p>
+                    <p><strong class="text-[rgb(195,145,110)]">Coordinator:</strong> {{ selectedEvent?.coordinator.name }}</p>
+                    <p><strong class="text-[rgb(195,145,110)]">Coordinator Phone:</strong> {{ selectedEvent?.coordinator.phone }}</p>
+                    <p class="md:col-span-2 text-md"><strong class="text-[rgb(195,145,110)]">Coordinator Email:</strong> {{ selectedEvent?.coordinator.email | titlecase }}</p>
+                    <p class="md:col-span-2"><strong class="text-[rgb(195,145,110)]">Pinterest URL:</strong> {{ selectedEvent?.pinterest_url }}</p>
+                    <p class="md:col-span-2"><strong class="text-[rgb(195,145,110)]">Notes:</strong> {{ selectedEvent?.notes }}</p>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="flex justify-end gap-2 mt-6">
+                    <button
+                        [disabled]="actionLoading"
+                        type="button"
+                        class="px-5 py-2 text-sm text-white bg-blue-600 rounded hover:bg-blue-700 flex items-center"
+                        (click)="openModifyEventModal(selectedEvent)"
+                    >
+                        <svg *ngIf="actionLoading" class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>
+                        Modify Event
+                    </button>
+                    <button
+                        [disabled]="actionLoading"
+                        type="button"
+                        class="px-5 py-2 text-sm text-white bg-green-600 rounded hover:bg-green-700 flex items-center"
+                        (click)="openProposalModal(selectedEvent)"
+                    >
+                        <svg *ngIf="actionLoading" class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>    
+                        Modify Proposal
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modify Event Modal -->
+    <div 
+        id="modifyEventModal" 
+        tabindex="-1" 
+        class="hidden fixed inset-0 z-50 overflow-y-auto transition-opacity duration-300 ease-in-out text-black font-body"
+    >
+        <div class="modal-wrapper opacity-0 scale-95 transition-all duration-300 ease-out flex items-center justify-center min-h-screen">
+            <div class="relative w-full max-w-2xl p-6 bg-white rounded-lg shadow-lg border-4 border-[rgb(195,145,110)]">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-xl font-bold text-[rgb(195,145,110)]">
+                            {{ selectedEvent?.client.first_name }} {{ selectedEvent?.client.last_name }}
+                        </h3>
+                    </div>
+                    <button
+                        type="button"
+                        class="hover:text-gray-900"
+                        (click)="closeModifyEventModal()"
+                    >
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414 5.707 15.707a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <form [formGroup]="eventForm" class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 text-md text-gray-700">
+                    <div>
+                        <label class="text-[rgb(195,145,110)] font-semibold">Client Email:</label>
+                        <input type="email" formControlName="email" class="w-full rounded border px-3 py-1" />
+                    </div>
+                    <div>
+                        <label class="text-[rgb(195,145,110)] font-semibold">Phone:</label>
+                        <input type="text" formControlName="phone" class="w-full rounded border px-3 py-1" />
+                    </div>
+                    <div>
+                        <label class="text-[rgb(195,145,110)] font-semibold">Event Type:</label>
+                        <select formControlName="event_type" class="w-full rounded border px-3 py-1">
+                            <option value="" disabled>-- Select Status --</option>
+                            <option value="wedding">Wedding</option>
+                            <option value="bridal shower">Bridal Shower</option>
+                            <option value="anniversary">Anniversary</option>
+                            <option value="engagement party">Engagement Party</option>
+                            <option value="baby shower">Baby Shower</option>
+                            <option value="funeral">Funeral</option>
+                            <option value="holiday">Holiday</option>
+                            <option value="corporate">Corporate</option>
+                            <option value="birthday">Birthday</option>
+                            <option value="quinceanera">Quinceanera</option>
+                            <option value="prom/homecoming">Prom/Homecoming</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[rgb(195,145,110)] font-semibold">Event Date:</label>
+                        <input type="date" formControlName="event_date" class="w-full rounded border px-3 py-1" />
+                    </div>
+                    <div>
+                        <label class="text-[rgb(195,145,110)] font-semibold">Venue:</label>
+                        <input type="text" formControlName="venue" class="w-full rounded border px-3 py-1" />
+                    </div>
+                    <div>
+                        <label class="text-[rgb(195,145,110)] font-semibold">Budget:</label>
+                        <input type="text" formControlName="budget" class="w-full rounded border px-3 py-1" />
+                    </div>
+                    <div>
+                        <label class="text-[rgb(195,145,110)] font-semibold">Coordinator:</label>
+                        <input type="text" formControlName="coordinator" class="w-full rounded border px-3 py-1" />
+                    </div>
+                    <div>
+                        <label class="text-[rgb(195,145,110)] font-semibold">Coordinator Email:</label>
+                        <input type="email" formControlName="coordinator_email" class="w-full rounded border px-3 py-1" />
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="text-[rgb(195,145,110)] font-semibold">Pinterest URL:</label>
+                        <input type="url" formControlName="pinterest_url" class="w-full rounded border px-3 py-1 placeholder-gray-400" placeholder="https://" />
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="text-[rgb(195,145,110)] font-semibold">Customer Notes:</label>
+                        <textarea formControlName="notes" rows="3" class="w-full rounded border px-3 py-1"></textarea>
+                    </div>
+                    <div>
+                        <label class="text-[rgb(195,145,110)] font-semibold">Status:</label>
+                        <select formControlName="status" class="w-full rounded border px-3 py-1">
+                            <option value="">-- Select Status --</option>
+                            <option value="approved">Approved</option>
+                            <option value="client review">Client Review</option>
+                            <option value="proposal declined">Proposal Declined</option>
+                            <option value="scheduled">Scheduled</option>
+                            <option value="complete">Complete</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[rgb(195,145,110)] font-semibold">Event Passcode:</label>
+                        <input type="text" formControlName="passcode" class="w-full rounded border px-3 py-1" />
+                    </div>
+                </form>
+
+                <!-- Modal Footer -->
+                <div class="flex justify-end gap-2 mt-6">
+                    <button
+                        [disabled]="actionLoading"
+                        type="button"
+                        (click)="saveEventChanges()"
+                        class="px-5 py-2 text-sm text-white bg-[rgb(195,145,110)] rounded hover:bg-white hover:text-[rgb(195,145,110)] hover:ring-2 hover:ring-[rgb(195,145,110)] focus:ring-4 focus:ring-[rgb(195,145,110)] flex items-center"
+                        >
+                        <svg *ngIf="actionLoading" class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Proposal Modal -->
+    <div 
+        id="proposalModal" 
+        tabindex="-1" 
+        class="hidden fixed inset-0 z-50 overflow-y-auto transition-opacity duration-300 ease-in-out text-black font-body"
+    >
+        <div class="modal-wrapper opacity-0 scale-95 transition-all duration-300 ease-out flex items-center justify-center min-h-screen">
+            <div class="relative w-full max-w-2xl p-6 bg-white rounded-lg shadow-lg border-4 border-[rgb(195,145,110)]">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-xl font-bold text-[rgb(195,145,110)]">
+                            {{ selectedEvent?.client.first_name }} {{ selectedEvent?.client.last_name }}
+                        </h3>
+                    </div>
+                    <button
+                        type="button"
+                        class="hover:text-gray-900"
+                        (click)="closeProposalModal()"
+                    >
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414 5.707 15.707a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <form class="mt-4 grid grid-cols-1 gap-4 text-md text-gray-700">
+                    <div>
+                        <label class="text-[rgb(195,145,110)] font-semibold">Client Email:</label>
+                        <input type="email" [value]="selectedEvent?.client.email" class="w-full rounded border border-gray-300 text-gray-500 px-3 py-1" disabled />
+                    </div>
+
+                    <!-- File upload input -->
+                    <div>
+                        <label class="text-[rgb(195,145,110)] font-semibold">Upload Proposal (PDF):</label>
+                        <input
+                            #proposalFileInput
+                            type="file"
+                            accept="application/pdf"
+                            (change)="onProposalFileSelected($event)"
+                            class="w-full rounded border px-3 py-1 bg-white text-gray-600"
+                            [ngClass]="{
+                                'border-red-500': proposalFile === null && proposalUploadEnabled,
+                                'opacity-50 cursor-not-allowed': selectedEvent?.activeProposal.pdf_url && !proposalUploadEnabled
+                            }"
+                            [disabled]="selectedEvent?.activeProposal.pdf_url && !proposalUploadEnabled"
+                        />
+                        <p class="mt-1 ml-3 text-sm text-gray-400" id="file_input_help">PDF file uploads only</p>
+
+                    </div>
+
+                    <!-- Existing PDF Display -->
+                    <div *ngIf="selectedEvent?.activeProposal?.pdf_url" class="text-sm">
+                        <strong class="text-[rgb(195,145,110)]">Existing Proposal:</strong>
+                        <a [href]="selectedEvent.activeProposal.pdf_url" target="_blank" class="text-blue-600 underline ml-2">View PDF</a>
+                    </div>
+                </form>
+
+                <!-- Modal Footer -->
+                <div class="flex justify-end gap-2 mt-6">
+                    <!-- Modify Proposal Button -->
+                    <div *ngIf="selectedEvent?.activeProposal.pdf_url && !proposalUploadEnabled">
+                        <button
+                            type="button"
+                            (click)="enableProposalEdit()"
+                            class="px-5 py-2 text-sm font-medium text-white bg-[rgb(195,145,110)] rounded hover:bg-white hover:text-[rgb(195,145,110)] hover:ring-2 hover:ring-[rgb(195,145,110)] flex items-center focus:ring-4 focus:ring-[rgb(195,145,110)]"
+                        >
+                            Modify Proposal
+                        </button>
+                    </div>
+                    <div *ngIf="!selectedEvent?.activeProposal.pdf_url || proposalUploadEnabled">
+                        <button
+                            type="button"
+                            class="px-5 cursor-pointer py-2 text-sm font-medium text-white bg-[rgb(195,145,110)] rounded hover:bg-white hover:text-[rgb(195,145,110)] hover:ring-2 hover:ring-[rgb(195,145,110)] flex items-center focus:ring-4 focus:ring-[rgb(195,145,110)]"
+                            [disabled]="!proposalUploadEnabled || !proposalFile || actionLoading"
+                            (click)="uploadProposal()"
+                        >
+                            <svg *ngIf="actionLoading" class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                            </svg>
+                            Upload Proposal
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Toast confirmation-->
+    <div
+        id="toast"
+        class="hidden fixed bottom-5 right-5 z-50 flex items-center w-full max-w-xs p-4 text-gray-500 bg-white rounded-lg shadow-sm transition-opacity duration-500 opacity-0"
+        [ngClass]="{
+            'text-green-400 bg-gray-50': toastType === 'success',
+            'text-red-400 bg-gray-50': toastType === 'error'
+        }"
+        role="alert"
+    >
+        <div
+            class="inline-flex items-center justify-center shrink-0 w-8 h-8 rounded-lg"
+            [ngClass]="{
+            'bg-green-200 text-green-600': toastType === 'success',
+            'bg-red-200 text-red-600': toastType === 'error'
+            }"
+        >
+            <ng-container [ngSwitch]="toastType">
+            <svg *ngSwitchCase="'success'" class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15.147 15.085a7.159 7.159 0 0 1-6.189 3.307A6.713 6.713 0 0 1 3.1 15.444c-2.679-4.513.287-8.737.888-9.548A4.373 4.373 0 0 0 5 1.608c1.287.953 6.445 3.218 5.537 10.5 1.5-1.122 2.706-3.01 2.853-6.14 1.433 1.049 3.993 5.395 1.757 9.117Z" />
+            </svg>
+            <svg *ngSwitchCase="'error'" class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15.25 8.75L8.75 15.25M8.75 8.75l6.5 6.5M12 2.75a9.25 9.25 0 1 0 0 18.5a9.25 9.25 0 0 0 0-18.5Z" />
+            </svg>
+            </ng-container>
+        </div>
+
+        <div class="ms-3 text-sm font-medium">
+            {{ toastMessage }}
+        </div>
+
+        <button type="button"
+            class="ms-auto -mx-1.5 -my-1.5 text-gray-400 hover:text-gray-900 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8"
+            (click)="dismissToast()"
+            aria-label="Close"
+        >
+            <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M1 1l6 6m0 0l6 6M7 7l6-6M7 7l-6 6" />
+            </svg>
+        </button>
+    </div>
+</section>

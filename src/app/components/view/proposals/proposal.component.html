@@ -1,0 +1,59 @@
+<div class="flex flex-col items-center justify-center min-h-screen p-4 bg-white">
+    <h1 class="text-2xl font-semibold mb-4">Proposal Preview</h1>
+
+    <ng-container *ngIf="proposal?.pdf_url; else loadingOrError">
+        <iframe
+            [src]="proposal.pdf_url | safeUrl"
+            type="application/pdf"
+            class="w-full max-w-5xl h-[80vh] border rounded shadow"
+        ></iframe>
+    </ng-container>
+
+    <ng-template #loadingOrError>
+        <p class="text-gray-500">No proposal available or loading failed.</p>
+    </ng-template>
+</div>  
+
+<!-- Terms Agreement Section -->
+<div class="max-w-5xl w-full mt-6 space-y-4">
+    <!-- Checkbox 1: Terms & Conditions -->
+    <label class="flex items-start space-x-3">
+        <input type="checkbox" [(ngModel)]="agreedToTerms" class="mt-1 accent-pink-600" />
+        <span class="text-sm text-gray-700">
+            Please review and check the box if you agree to
+            <button
+                type="button"
+                (click)="openTermsModal()"
+                class="text-pink-600 underline hover:text-pink-800"
+            >
+                Rudbeckia's Terms & Conditions
+            </button>.
+        </span>
+    </label>
+    
+    <!-- Checkbox 2: Digital Signature -->
+    <label class="flex items-start space-x-3">
+        <input type="checkbox" [(ngModel)]="digitallySigned" class="mt-1 accent-pink-600" />
+        <span class="text-sm text-gray-700">
+            Checking this box serves as a digital signature of agreement to the displayed proposal above.
+        </span>
+    </label>
+    
+    <!-- Buttons -->
+    <div class="flex space-x-4 mt-4">
+        <button
+            class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+            [disabled]="!agreedToTerms || !digitallySigned"
+            (click)="acceptProposal()"
+        >
+            Accept Proposal
+        </button>
+        <button
+            class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            (click)="declineProposal()"
+        >
+            Decline Proposal
+        </button>
+    </div>
+</div>
+
