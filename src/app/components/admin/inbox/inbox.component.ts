@@ -13,10 +13,10 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
   styleUrls: ['./inbox.component.css']
 })
 export class InboxComponent implements OnInit {
-  messages: any[] = [];
+  Inquiries: any[] = [];
   loading: boolean = true;
   user: any;
-  selectedMessage: any = null;
+  selectedInquiry: any = null;
   actionLoading: boolean = false;
 
   filterStatus: string = 'All';
@@ -46,21 +46,33 @@ export class InboxComponent implements OnInit {
     this.searchForm.get('searchTerm')?.valueChanges.subscribe(value => {
       this.searchTerm = value;
       this.currentPage = 1;
-      this.fetchMessages();
+      this.fetchInquiries();
     });
 
-    await this.fetchMessages();
+    await this.fetchInquiries();
   }
 
-  async fetchMessages() {
+  async fetchInquiries() {
     this.loading = true;
 
     const from = (this.currentPage - 1) * this.pageSize;
     const to = from + this.pageSize - 1;
 
     let query = this.supabase.getClient()
-      .from('contact_msg')
-      .select('*', { count: 'exact' })
+      .from('Inquiries')
+      .select(`
+        *,
+        client:clients (
+          first_name,
+          last_name,
+          email,
+          phone
+        ),
+        coordinator:coordinators (
+          name,
+          email
+        )
+      `, { count: 'exact' })
       .range(from, to);
 
     if (this.filterStatus !== 'All') {
@@ -76,9 +88,9 @@ export class InboxComponent implements OnInit {
     const { data, count, error } = await query.order('created_at', { ascending: false });
     
     if (error) {
-      console.error('Failed to load messages:', error.message);
+      console.error('Failed to load Inquiries:', error.message);
     } else {
-      this.messages = data || [];
+      this.Inquiries = data || [];
       this.totalRecords = count || 0;
     }
     this.loading = false;
@@ -87,20 +99,20 @@ export class InboxComponent implements OnInit {
   onFilterChange(status: string) {
     this.filterStatus = status;
     this.currentPage = 1;
-    this.fetchMessages();
+    this.fetchInquiries();
   }
 
   nextPage() {
     if ((this.currentPage * this.pageSize) < this.totalRecords) {
       this.currentPage++;
-      this.fetchMessages();
+      this.fetchInquiries();
     }
   }
   
   prevPage() {
     if (this.currentPage > 1) {
       this.currentPage--;
-      this.fetchMessages();
+      this.fetchInquiries();
     }
   }
 
@@ -121,7 +133,7 @@ export class InboxComponent implements OnInit {
     if (!this.isAnySelected()) return;
 
     const { error } = await this.supabase.getClient()
-      .from('contact_msg')
+      .from('Inquiries')
       .update({ is_read: false })
       .in('id', Array.from(this.selectedIds));
 
@@ -129,7 +141,7 @@ export class InboxComponent implements OnInit {
       console.error('Failed to mark as unread:', error.message);
     } else {
       this.selectedIds.clear();
-      await this.fetchMessages();
+      await this.fetchInquiries();
     }
   }
 
@@ -137,7 +149,7 @@ export class InboxComponent implements OnInit {
     if (!this.isAnySelected()) return;
 
     const { error } = await this.supabase.getClient()
-      .from('contact_msg')
+      .from('Inquiries')
       .update({ is_read: true })
       .in('id', Array.from(this.selectedIds));
 
@@ -145,7 +157,7 @@ export class InboxComponent implements OnInit {
       console.error('Failed to mark as read:', error.message);
     } else {
       this.selectedIds.clear();
-      await this.fetchMessages();
+      await this.fetchInquiries();
     }
   }
 
@@ -159,15 +171,15 @@ export class InboxComponent implements OnInit {
     if (!this.isAnySelected()) return;
 
     const { error } = await this.supabase.getClient()
-      .from('contact_msg')
+      .from('Inquiries')
       .delete()
       .in('id', Array.from(this.selectedIds));
 
     if (error) {
-      console.error('Failed to delete messages:', error.message);
+      console.error('Failed to delete Inquiries:', error.message);
     } else {
       this.selectedIds.clear();
-      await this.fetchMessages();
+      await this.fetchInquiries();
     }
 
     this.showDeleteConfirmModal = false;
@@ -177,19 +189,19 @@ export class InboxComponent implements OnInit {
     this.showDeleteConfirmModal = false;
   }
 
-  async openMessageModal(msg: any) {
-    this.selectedMessage = msg;
+  async openInquiryModal(inq: any) {
+    this.selectedInquiry = inq;
 
-    if (!msg.is_read) {
+    if (!inq.is_read) {
       const { error } = await this.supabase.getClient()
-        .from('contact_msg')
+        .from('Inquiries')
         .update({ is_read: true })
-        .eq('id', msg.id);
+        .eq('id', inq.id);
   
       if (error) {
-        console.error('Failed to mark message as read:', error.message);
+        console.error('Failed to mark Inquiry as read:', error.message);
       } else {
-        msg.is_read = true; // update local data
+        inq.is_read = true; // update local data
       }
     }
 
@@ -205,7 +217,7 @@ export class InboxComponent implements OnInit {
     }
   }
 
-  closeMessageModal() {
+  closeInquiryModal() {
     const modal = document.getElementById('readUserModal');
     const modalWrapper = modal?.querySelector('.modal-wrapper');
     if (modal && modalWrapper) {
@@ -213,62 +225,62 @@ export class InboxComponent implements OnInit {
       modalWrapper.classList.remove('opacity-100', 'scale-100');
       setTimeout(() => {
         modal.classList.add('hidden');
-        this.selectedMessage = null;
+        this.selectedInquiry = null;
       }, 200);
     }
   }
 
-  async acceptMessage() {
-    if (!confirm('Are you sure you want to ACCEPT this message and create an event?')) return;
+  async acceptInquiry() {
+    if (!confirm('Are you sure you want to ACCEPT this inquiry and create an event?')) return;
     this.actionLoading = true;
 
-    const msg = this.selectedMessage;
+    const inq = this.selectedInquiry;
     const { error: updateError } = await this.supabase.getClient()
-      .from('contact_msg')
+      .from('Inquiries')
       .update({ status: 'Accepted', decision_by: this.user.id })
-      .eq('id', msg.id);
+      .eq('id', inq.id);
 
     const { error: insertError } = await this.supabase.getClient()
       .from('events')
       .insert([{
-        contact_msg_id: msg.id,
-        name: msg.name,
-        email: msg.email,
-        phone: msg.phone,
-        event_date: msg.event_date,
-        event_type: msg.event_type,
-        venue: msg.venue,
-        budget: msg.budget,
-        coordinator: msg.coordinator,
-        coordinator_email: msg.coordinator_email,
-        message: msg.message,
+        inquiries_id: inq.id,
+        name: inq.name,
+        email: inq.email,
+        phone: inq.phone,
+        event_date: inq.event_date,
+        event_type: inq.event_type,
+        venue: inq.venue,
+        budget: inq.budget,
+        coordinator: inq.coordinator,
+        coordinator_email: inq.coordinator_email,
+        Inquiry: inq.Inquiry,
         status: 'Approved',
       }]);
 
     if (updateError || insertError) {
-      console.error('Error processing message:', updateError || insertError);
+      console.error('Error processing Inquiry:', updateError || insertError);
     } else {
-      this.closeMessageModal();
-      await this.fetchMessages();
+      this.closeInquiryModal();
+      await this.fetchInquiries();
     }
 
     this.actionLoading = false;
   }
 
-  async declineMessage() {
-    if (!confirm('Are you sure you want to DECLINE this message?')) return;
+  async declineInquiry() {
+    if (!confirm('Are you sure you want to DECLINE this Inquiry?')) return;
 
-    const msg = this.selectedMessage;
+    const inq = this.selectedInquiry;
     const { error } = await this.supabase.getClient()
-      .from('contact_msg')
+      .from('Inquiries')
       .update({ status: 'Declined', decision_by: this.user.id })
-      .eq('id', msg.id);
+      .eq('id', inq.id);
 
     if (error) {
-      console.error('Error declining message:', error.message);
+      console.error('Error declining Inquiry:', error.message);
     } else {
-      this.closeMessageModal();
-      await this.fetchMessages();
+      this.closeInquiryModal();
+      await this.fetchInquiries();
     }
   }
 }
