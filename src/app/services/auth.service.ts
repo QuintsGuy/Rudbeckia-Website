@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { SupabaseClient, createClient, Session } from '@supabase/supabase-js';
-import { environment } from '../../environments/environment.dev';
+import { Session, SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseService } from './supabase.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,21 +11,28 @@ export class AuthService {
   private loginAttempts: Record<string, number> = {};
   private session: Session | null = null;
 
-  constructor(private router: Router) {
-    this.supabase = createClient(environment.SUPABASE_URL, environment.SUPABASE_KEY);
-    this.supabase.auth.getSession().then(({ data }) => {
+  constructor(private router: Router, private supabaseService: SupabaseService) {
+    this.supabase = this.supabaseService.getClient();
+  }
+
+  async init(): Promise<void> {
+    try {
+      const { data } = await this.supabase.auth.getSession();
       this.session = data.session;
       console.log('✅ Restored session:', this.session);
-    });
 
-    this.supabase.auth.onAuthStateChange((_event, session) => {
-      this.session = session;
-    });
+      this.supabase.auth.onAuthStateChange((_event, session) => {
+        this.session = session;
+      });
+    } catch (e) {
+      console.error('AuthService init failed:', e);
+    }
   }
 
   async login(email: string, password: string): Promise<string | null> {
-    const { data, error } = await this.supabase.auth.signInWithPassword({ email, password });
+    const supabase = this.supabaseService.getClient();
 
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       return this.handleFailedAttempt(email);
     }
@@ -33,24 +40,20 @@ export class AuthService {
     const user = data.user;
     this.resetAttempts(email);
 
-    // Set isAdmin to true in user metadata if not already set
     if (!user?.user_metadata['isAdmin']) {
-      await this.supabase.auth.updateUser({ data: { isAdmin: true } });
+      await supabase.auth.updateUser({ data: { isAdmin: true } });
     }
 
-    // Optional: manually refresh the session (e.g., get latest JWT)
-    const { data: refreshedSession } = await this.supabase.auth.getSession();
-    const jwt = refreshedSession.session?.access_token;
+    const { data: refreshedSession } = await supabase.auth.getSession();
     this.session = refreshedSession?.session || null;
-
-    console.log('JWT: ', jwt);
-
     this.router.navigate(['/private/dashboard']);
     return null;
   }
 
   async verifyPasscode(passcode: string) {
-    const { data, error } = await this.supabase
+    const supabase = this.supabaseService.getClient();
+
+    const { data, error } = await supabase
       .from('passcodes')
       .select('passcode')
       .eq('passcode', passcode)
@@ -60,14 +63,14 @@ export class AuthService {
       console.log('Error verifying passcode: ', error);
       return;
     }
-    
+
     this.router.navigate(['/view/proposal'], { state: { passcode: data } });
   }
 
   logout(): void {
-    this.supabase.auth.signOut();
+    this.supabaseService.signOut();
     this.session = null;
-    this.router.navigate(['auth/login']);
+    this.router.navigate(['/auth/login']);
   }
 
   getSession(): Session | null {
@@ -75,8 +78,7 @@ export class AuthService {
   }
 
   async getUser() {
-    const { data } = await this.supabase.auth.getUser();
-    return data.user;
+    return this.supabaseService.getUser();
   }
 
   isLoggedIn(): boolean {
@@ -84,8 +86,7 @@ export class AuthService {
   }
 
   async isAdmin(): Promise<boolean> {
-    const user = await this.getUser();
-    return !!user?.user_metadata['isAdmin'];
+    return this.supabaseService.isAdmin();
   }
 
   private handleFailedAttempt(email: string): string {

@@ -3,6 +3,10 @@ import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment.dev';
 
+declare global {
+  interface Window { supabase?: SupabaseClient }
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -10,14 +14,18 @@ export class SupabaseService {
   private supabase: SupabaseClient;
 
   constructor() {
-    this.supabase = createClient(
-      environment['SUPABASE_URL'] as string,
-      environment['SUPABASE_KEY'] as string,
-      {
-        auth: { persistSession: true }
-      }
-    );
-    console.log('SupabaseService Initialized');
+    if (!window.supabase) {
+      window.supabase = createClient(
+        environment['SUPABASE_URL'] as string,
+        environment['SUPABASE_KEY'] as string,
+        { auth: { persistSession: true } }
+      );
+      console.log('SupabaseService Initialized');
+    } else {
+      console.log('Using cached Supabase instance');
+    }
+
+    this.supabase = window.supabase!;
   }
 
   getClient(): SupabaseClient {

@@ -145,7 +145,7 @@
                             </td>
                             <td class="pl-4 py-3 flex gap-2">
                                 <button (click)="openEventModal(event)" class="px-3 py-1 text-xs text-white bg-blue-600 rounded hover:bg-blue-700">Details</button>
-                                <button (click)="openProposalModal(event)" class="px-3 py-1 text-xs text-white bg-green-600 rounded hover:bg-green-700">Proposal</button>
+                                <button (click)="openProposalModal(event)" class="px-3 text-xs text-white bg-green-600 rounded hover:bg-green-700">Proposal</button>
                             </td>
                         </tr>
                     </tbody>
@@ -422,25 +422,25 @@
                             class="w-full rounded border px-3 py-1 bg-white text-gray-600"
                             [ngClass]="{
                                 'border-red-500': proposalFile === null && proposalUploadEnabled,
-                                'opacity-50 cursor-not-allowed': selectedEvent?.activeProposal.pdf_url && !proposalUploadEnabled
+                                'opacity-50 cursor-not-allowed': selectedEvent?.data?.pdf_url && !proposalUploadEnabled
                             }"
-                            [disabled]="selectedEvent?.activeProposal.pdf_url && !proposalUploadEnabled"
+                            [disabled]="selectedEvent?.data?.pdf_url && !proposalUploadEnabled"
                         />
                         <p class="mt-1 ml-3 text-sm text-gray-400" id="file_input_help">PDF file uploads only</p>
 
                     </div>
 
                     <!-- Existing PDF Display -->
-                    <div *ngIf="selectedEvent?.activeProposal?.pdf_url" class="text-sm">
+                    <div *ngIf="selectedEvent?.data?.pdf_url" class="text-sm">
                         <strong class="text-[rgb(195,145,110)]">Existing Proposal:</strong>
-                        <a [href]="selectedEvent.activeProposal.pdf_url" target="_blank" class="text-blue-600 underline ml-2">View PDF</a>
+                        <a [href]="selectedEvent.data?.pdf_url" target="_blank" class="text-blue-600 underline ml-2">View PDF</a>
                     </div>
                 </form>
 
                 <!-- Modal Footer -->
                 <div class="flex justify-end gap-2 mt-6">
                     <!-- Modify Proposal Button -->
-                    <div *ngIf="selectedEvent?.activeProposal.pdf_url && !proposalUploadEnabled">
+                    <div *ngIf="selectedEvent?.data?.pdf_url && !proposalUploadEnabled">
                         <button
                             type="button"
                             (click)="enableProposalEdit()"
@@ -449,7 +449,7 @@
                             Modify Proposal
                         </button>
                     </div>
-                    <div *ngIf="!selectedEvent?.activeProposal.pdf_url || proposalUploadEnabled">
+                    <div *ngIf="!selectedEvent?.data?.pdf_url || proposalUploadEnabled">
                         <button
                             type="button"
                             class="px-5 cursor-pointer py-2 text-sm font-medium text-white bg-[rgb(195,145,110)] rounded hover:bg-white hover:text-[rgb(195,145,110)] hover:ring-2 hover:ring-[rgb(195,145,110)] flex items-center focus:ring-4 focus:ring-[rgb(195,145,110)]"

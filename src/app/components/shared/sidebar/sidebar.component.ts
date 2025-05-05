@@ -1,8 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../../services/auth.service'; // adjust the path if needed
-import { SupabaseService } from '../../../services/supabase.service';
+import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,34 +9,13 @@ import { SupabaseService } from '../../../services/supabase.service';
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css'
 })
-export class SidebarComponent implements OnInit {
-  unreadCount: number = 0;
-
-  constructor(
-    private authService: AuthService,
-    private supabase: SupabaseService,
-    private router: Router
-  ) {}
-
-  async ngOnInit() {
-    await this.fetchUnreadCount();
-  }
-
-  async fetchUnreadCount() {
-    const { count, error } = await this.supabase.getClient()
-      .from('inquiries')
-      .select('*', { count: 'exact', head: true })
-      .eq('is_read', false);
-
-    if (error) {
-      console.error('Error fetching unread count:', error.message);
-    } else {
-      this.unreadCount = count ?? 0;
+export class SidebarComponent {
+  collapseMenu() {
+    const toggleButton = document.querySelector('[data-collapse-toggle="mobile-menu-2"]') as HTMLElement;
+    const menu = document.getElementById('mobile-menu-2');
+  
+    if (toggleButton && menu && !menu.classList.contains('hidden')) {
+      setTimeout(() => toggleButton.click(), 10);
     }
-  }
-
-  async Logout(): Promise<void> {
-    await this.authService.logout();
-    this.router.navigate(['/login']);
   }
 }

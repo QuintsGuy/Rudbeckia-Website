@@ -286,23 +286,25 @@ export class EventsComponent {
     this.selectedEvent = event;
     this.closeEventModal(true);
 
-    const { data: activeProposal, error: fetchError } = await this.supabase.getClient()
+    const { data, error } = await this.supabase.getClient()
       .from('proposals')
       .select("proposal_id, pdf_url, is_active")
       .eq('event_id', this.selectedEvent.event_id)
       .eq('is_active', true)
-      .single();
+      .limit(1)
+      .maybeSingle()
 
-    if (fetchError) {
-      console.error('Error fetching active proposal:', fetchError);
-      this.showToast('Failed to fetch proposal: ' + fetchError.message, 'error');
+    if (error && error.code !== 'PGRST116'){
+      console.error('Error fetching active proposal: ', error);
+      return;
     }
 
-    if (activeProposal) {
-      this.selectedEvent.activeProposal = activeProposal;
-    } else {
-      this.selectedEvent.activeProposal = null;
+    if (!data) {
+      console.log("No active proposal found.");
+      this.selectedEvent.data = null;
     }
+
+    this.selectedEvent.data = data;
     
     const modal = document.getElementById('proposalModal');
     const modalWrapper = modal?.querySelector('.modal-wrapper');
