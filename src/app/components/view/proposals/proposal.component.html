@@ -21,13 +21,14 @@
         <input type="checkbox" [(ngModel)]="agreedToTerms" class="mt-1 accent-pink-600" />
         <span class="text-sm text-gray-700">
             Please review and check the box if you agree to
-            <button
-                type="button"
-                (click)="openTermsModal()"
+            <a
+                href="/terms-and-conditions"
+                target="_blank"
+                rel="noopener"
                 class="text-pink-600 underline hover:text-pink-800"
             >
                 Rudbeckia's Terms & Conditions
-            </button>.
+            </a>.
         </span>
     </label>
     

@@ -24,6 +24,7 @@ import { EventsComponent } from './components/private/events/events.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { PasscodeComponent } from './components/auth/passcode/passcode.component';
 import { StripeComponent } from './components/view/stripe/stripe.component';
+import { TermsAndConditionsComponent } from './components/public/terms-and-conditions/terms-and-conditions.component';
 
 export const routes: Routes = [
     {
@@ -37,6 +38,7 @@ export const routes: Routes = [
             { path: 'reviews', component: ReviewsComponent },
             { path: 'contact', component: ContactComponent },
             { path: 'password-recovery', component: PasswordRecoveryComponent},
+            { path: 'terms-and-conditions', component: TermsAndConditionsComponent},
         ]
     },
     {
