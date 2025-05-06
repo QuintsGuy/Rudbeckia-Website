@@ -148,7 +148,7 @@ export class EventsComponent {
 
     if (error) {
       console.error('Could not open event modal:', error.message);
-      this.showToast('Could not open event modal:' + error.message, 'success');
+      this.showToast('Could not open event modal:' + error.message, 'error');
     }
     
     const modal = document.getElementById('viewEventModal');
