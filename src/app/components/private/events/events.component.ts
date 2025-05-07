@@ -4,6 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { SupabaseService } from '../../../services/supabase.service';
 import { Router } from '@angular/router';
 import { ViewChild, ElementRef } from '@angular/core';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-events',
@@ -54,7 +55,11 @@ export class EventsComponent {
   toastMessage: string = '';
   toastType: 'success' | 'error' = 'success';
 
-  constructor(private supabase: SupabaseService, private router: Router) {}
+  constructor(
+    private supabase: SupabaseService, 
+    private router: Router,
+    private toast: ToastService
+  ) {}
 
   async ngOnInit() {
     const session = await this.supabase.getClient().auth.getSession();
@@ -105,7 +110,7 @@ export class EventsComponent {
     
     if (error) {
       console.error('Failed to load events:', error.message);
-      this.showToast('Failed to load events:' + error.message, 'error');
+      this.toast.showToast('Failed to load events:' + error.message, 'error');
     } else {
       this.events = data || [];
       this.totalRecords = count || 0;
@@ -148,7 +153,7 @@ export class EventsComponent {
 
     if (error) {
       console.error('Could not open event modal:', error.message);
-      this.showToast('Could not open event modal:' + error.message, 'error');
+      this.toast.showToast('Could not open event modal.', 'error');
     }
     
     const modal = document.getElementById('viewEventModal');
@@ -224,7 +229,7 @@ export class EventsComponent {
 
     if (clientError) {
       console.error('Failed to update client:', clientError.message);
-      this.showToast('Failed to update client: ' + clientError.message, 'error');
+      this.toast.showToast('Failed to update client.', 'error');
       return;
     }
 
@@ -239,7 +244,7 @@ export class EventsComponent {
 
     if (coordinatorError) {
       console.error('Failed to update coordinator:', coordinatorError.message);
-      this.showToast('Failed to update coordinator: ' + coordinatorError.message, 'error');
+      this.toast.showToast('Failed to update coordinator.', 'error');
       return;
     }
 
@@ -258,11 +263,11 @@ export class EventsComponent {
   
     if (eventError) {
       console.error('Failed to update event:', eventError.message);
-      this.showToast('Failed to update event: ' + eventError.message, 'error');
+      this.toast.showToast('Failed to update event.', 'error');
     } else {
       await this.fetchEvents(); // reload updated data
       this.closeModifyEventModal();
-      this.showToast('Event modified successfully!', 'success');
+      this.toast.showToast('Event modified successfully!', 'success');
     }
   
     this.actionLoading = false;
@@ -362,7 +367,7 @@ export class EventsComponent {
 
     if (fetchError) {
       console.error('Error fetching active proposal:', fetchError);
-      this.showToast('Fetch failed: ' + fetchError.message, 'error');
+      this.toast.showToast('Fetching proposal failed.', 'error');
       return;
     }
 
@@ -387,7 +392,7 @@ export class EventsComponent {
 
     if (updateError) {
       console.error('Error updating active proposal: ', updateError);
-      this.showToast('Modification failed: ' + updateError.message, 'error');
+      this.toast.showToast('Modifying proposal failed.', 'error');
       return;
     }
 
@@ -404,7 +409,7 @@ export class EventsComponent {
 
     if (insertError) {
       console.error('Error inserting new proposal:', insertError);
-      this.showToast('Insert failed: ' + insertError.message, 'error');
+      this.toast.showToast('Submitting new proposal failed.', 'error');
       return;
     }
 
@@ -413,7 +418,7 @@ export class EventsComponent {
       .upload(filePath, this.proposalFile, { upsert: true });
 
     if (uploadError) {
-      this.showToast('Upload failed: ' + uploadError.message, 'error');
+      this.toast.showToast('Uploading proposal failed.', 'error');
       this.actionLoading = false;
       return;
     }
@@ -424,7 +429,7 @@ export class EventsComponent {
     this.selectedEvent.status = 'Client Review';
     await this.fetchEvents();
     this.closeProposalModal();
-    this.showToast('Proposal uploaded successfully!', 'success');
+    this.toast.showToast('Proposal uploaded successfully!', 'success');
     this.proposalFile = null;
     this.proposalUploadEnabled = false;
     this.actionLoading = false;
@@ -465,30 +470,6 @@ export class EventsComponent {
           this.proposalFileInput.nativeElement.value = '';
         }
       }, 200);
-    }
-  }
-
-  showToast(message: string, type: 'success' | 'error' = 'success') {
-    const toast = document.getElementById('toast');
-    this.toastMessage = message;
-    this.toastType = type;
-  
-    if (toast) {
-      toast.classList.remove('hidden');
-      setTimeout(() => toast.classList.add('opacity-100'), 50);
-  
-      setTimeout(() => {
-        toast.classList.remove('opacity-100');
-        setTimeout(() => toast.classList.add('hidden'), 500);
-      }, 4000);
-    }
-  }
-
-  dismissToast() {
-    const toast = document.getElementById('toast');
-    if (toast) {
-      toast.classList.remove('opacity-100');
-      setTimeout(() => toast.classList.add('hidden'), 500);
     }
   }
 }

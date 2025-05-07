@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SupabaseService } from '../../../services/supabase.service';
 import { RouterModule } from '@angular/router';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-password-recovery',
@@ -14,10 +15,12 @@ import { RouterModule } from '@angular/router';
 export class PasswordRecoveryComponent { 
   recoveryForm: FormGroup;
   loading = false;
-  successMessage: string | null = null;
-  errorMessage: string | null = null;
 
-  constructor(private fb: FormBuilder, private supabaseService: SupabaseService) {
+  constructor(
+    private fb: FormBuilder, 
+    private supabaseService: SupabaseService, 
+    private toast: ToastService
+  ) {
     this.recoveryForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]] 
     });
@@ -27,8 +30,6 @@ export class PasswordRecoveryComponent {
     if (this.recoveryForm.invalid) return;
 
     this.loading = true;
-    this.successMessage = null;
-    this.errorMessage = null;
 
     const email = this.recoveryForm.get('email')?.value;
 
@@ -36,12 +37,12 @@ export class PasswordRecoveryComponent {
       const { error } = await this.supabaseService.getClient().auth.resetPasswordForEmail(email);
 
       if (error) {
-        this.errorMessage = error.message;
+        this.toast.showToast(`Failed to send reset link: ${error.message}`, 'error');
       } else {
-        this.successMessage = 'Reset link sent! Please check your email.';
+        this.toast.showToast('Password reset email sent. Please check your inbox!', 'success');
       }
     } catch (err: any) {
-      this.errorMessage = 'Something went wrong. Please try again.';
+      this.toast.showToast('Something went wrong. Please try again.', 'error');
     } finally {
       this.loading = false;
     }
