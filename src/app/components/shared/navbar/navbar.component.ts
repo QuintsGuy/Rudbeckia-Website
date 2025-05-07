@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -10,6 +11,17 @@ import { RouterModule } from '@angular/router';
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {
+  hideLoginButton = false;
+  private hiddenRoutes = ['/auth/passcode', '/view/proposal', '/auth/login', '/contact'];
+  
+  constructor(private router: Router) {
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        this.hideLoginButton = this.hiddenRoutes.includes(event.urlAfterRedirects);
+      });
+  }
+
   collapseMenu() {
     const toggleButton = document.querySelector('[data-collapse-toggle="mobile-menu-2"]') as HTMLElement;
     const menu = document.getElementById('mobile-menu-2');
