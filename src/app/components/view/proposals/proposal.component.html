@@ -1,60 +1,62 @@
-<div class="flex flex-col items-center justify-center min-h-screen p-4 bg-white">
-    <h1 class="text-2xl font-semibold mb-4">Proposal Preview</h1>
+<div class="min-h-[calc(100vh-76px)] bg-gradient-to-b from-[#d49b79] to-[#f5e6dc] flex items-center justify-center p-6">
+    <div class="bg-white bg-opacity-90 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-full max-w-5xl text-gray-800 font-serif">
 
-    <ng-container *ngIf="proposal?.pdf_url; else loadingOrError">
-        <iframe
-            [src]="proposal.pdf_url | safeUrl"
-            type="application/pdf"
-            class="w-full max-w-5xl h-[80vh] border rounded shadow"
-        ></iframe>
-    </ng-container>
-
-    <ng-template #loadingOrError>
-        <p class="text-gray-500">No proposal available or loading failed.</p>
-    </ng-template>
-</div>  
-
-<!-- Terms Agreement Section -->
-<div class="max-w-5xl w-full mt-6 space-y-4">
-    <!-- Checkbox 1: Terms & Conditions -->
-    <label class="flex items-start space-x-3">
-        <input type="checkbox" [(ngModel)]="agreedToTerms" class="mt-1 accent-pink-600" />
-        <span class="text-sm text-gray-700">
-            Please review and check the box if you agree to
-            <a
-                href="/terms-and-conditions"
-                target="_blank"
-                rel="noopener"
-                class="text-pink-600 underline hover:text-pink-800"
-            >
-                Rudbeckia's Terms & Conditions
-            </a>.
-        </span>
-    </label>
+        <h1 class="text-4xl font-bold mb-6 text-center text-[#b66a53] font-display">Proposal Preview</h1>
     
-    <!-- Checkbox 2: Digital Signature -->
-    <label class="flex items-start space-x-3">
-        <input type="checkbox" [(ngModel)]="digitallySigned" class="mt-1 accent-pink-600" />
-        <span class="text-sm text-gray-700">
-            Checking this box serves as a digital signature of agreement to the displayed proposal above.
-        </span>
-    </label>
+        <ng-container *ngIf="proposal?.pdf_url; else loadingOrError">
+            <iframe
+                [src]="proposal.pdf_url | safeUrl"
+                type="application/pdf"
+                class="w-full h-[75vh] rounded-lg border shadow-inner"
+            ></iframe>
+        </ng-container>
     
-    <!-- Buttons -->
-    <div class="flex space-x-4 mt-4">
-        <button
-            class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
-            [disabled]="!agreedToTerms || !digitallySigned"
-            (click)="acceptProposal()"
-        >
-            Accept Proposal
-        </button>
-        <button
-            class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-            (click)="declineProposal()"
-        >
-            Decline Proposal
-        </button>
+        <ng-template #loadingOrError>
+            <p class="text-center text-gray-500 italic">No proposal available or loading failed.</p>
+        </ng-template>
+    
+        <!-- Terms Agreement Section -->
+        <div class="mt-8 space-y-5">
+            <!-- Checkbox 1: Terms & Conditions -->
+            <label class="flex items-start space-x-3">
+                <input type="checkbox" [(ngModel)]="agreedToTerms" class="mt-1 accent-pink-600" />
+                <span class="text-sm text-gray-700">
+                    Please review and check the box if you agree to
+                    <a
+                        href="/terms-and-conditions"
+                        target="_blank"
+                        rel="noopener"
+                        class="text-pink-600 underline hover:text-pink-800"
+                    >
+                        Rudbeckia's Terms & Conditions
+                    </a>.
+                </span>
+            </label>
+    
+            <!-- Checkbox 2: Digital Signature -->
+            <label class="flex items-start space-x-3">
+                <input type="checkbox" [(ngModel)]="digitallySigned" class="mt-1 accent-pink-600" />
+                <span class="text-sm text-gray-700">
+                    Checking this box serves as a digital signature of agreement to the displayed proposal above.
+                </span>
+            </label>
+    
+            <!-- Action Buttons -->
+            <div class="flex justify-center space-x-6 pt-4">
+                <button
+                    class="px-6 py-2 rounded-md bg-[#3b8d5d] hover:bg-[#2d724a] text-white font-semibold transition duration-300 disabled:opacity-50"
+                    [disabled]="!agreedToTerms || !digitallySigned"
+                    (click)="acceptProposal()"
+                >
+                    Accept Proposal
+                </button>
+                <button
+                    class="px-6 py-2 rounded-md bg-[#b83e3e] hover:bg-[#932f2f] text-white font-semibold transition duration-300"
+                    (click)="declineProposal()"
+                >
+                    Decline Proposal
+                </button>
+            </div>
+        </div>
     </div>
 </div>
-

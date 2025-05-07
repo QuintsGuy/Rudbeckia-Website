@@ -30,9 +30,7 @@ export class AuthService {
   }
 
   async login(email: string, password: string): Promise<string | null> {
-    const supabase = this.supabaseService.getClient();
-
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await this.supabase.auth.signInWithPassword({ email, password });
     if (error) {
       return this.handleFailedAttempt(email);
     }
@@ -41,30 +39,32 @@ export class AuthService {
     this.resetAttempts(email);
 
     if (!user?.user_metadata['isAdmin']) {
-      await supabase.auth.updateUser({ data: { isAdmin: true } });
+      await this.supabase.auth.updateUser({ data: { isAdmin: true } });
     }
 
-    const { data: refreshedSession } = await supabase.auth.getSession();
+    const { data: refreshedSession } = await this.supabase.auth.getSession();
     this.session = refreshedSession?.session || null;
     this.router.navigate(['/private/dashboard']);
     return null;
   }
 
-  async verifyPasscode(passcode: string) {
-    const supabase = this.supabaseService.getClient();
+  async verifyPasscode(passcode: string): Promise<boolean> {
+    try {
+      const { data, error } = await this.supabase
+        .from('passcodes')
+        .select('passcode')
+        .eq('passcode', passcode)
+        .single();
 
-    const { data, error } = await supabase
-      .from('passcodes')
-      .select('passcode')
-      .eq('passcode', passcode)
-      .single();
+      if (error || !data) {
+        return false;
+      }
 
-    if (error || !data) {
-      console.log('Error verifying passcode: ', error);
-      return;
+      this.router.navigate(['/view/proposal'], { state: { passcode: data } });
+      return true;
+    } catch (err) {
+      return false;
     }
-
-    this.router.navigate(['/view/proposal'], { state: { passcode: data } });
   }
 
   logout(): void {
