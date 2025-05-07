@@ -37,24 +37,21 @@ export class ProposalComponent implements OnInit {
         .select(`
           *,
           event:events (
-            event_id,
-            proposal:proposals (
-              proposal_id,
-              pdf_url,
-              is_active
-            )
+            event_type
           )
         `)
         .eq('passcode', passcode)
-        .eq('event.proposal.is_active', true)
         .single()
 
+      console.log(passcodeData);
+      console.log(error);
+      
       if (error || !passcodeData) {
         console.error('Error fetching event data:', error);
         return;
       }
 
-      this.proposal = passcodeData.event.proposal[0];
+      this.proposal = passcodeData.event?.proposal;
       console.log(this.proposal);
 
       if (!this.proposal) {
