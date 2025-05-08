@@ -46,9 +46,11 @@ export class ProposalComponent implements OnInit {
           )
         `)
         .eq('passcode', passcode)
-        .eq('event.proposal.is_active', true)
         .single()
 
+      console.log(passcodeData);
+      console.log(error);
+      
       if (error || !passcodeData) {
         console.error('Error fetching event data:', error);
         return;
