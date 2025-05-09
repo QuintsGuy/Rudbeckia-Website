@@ -25,6 +25,9 @@ import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component
 import { PasscodeComponent } from './components/auth/passcode/passcode.component';
 import { StripeComponent } from './components/view/stripe/stripe.component';
 import { TermsAndConditionsComponent } from './components/public/terms-and-conditions/terms-and-conditions.component';
+import { PaymentsComponent } from './components/view/payments/payments.component';
+import { PaymentSuccessComponent } from './components/view/payment-success/payment-success.component';
+import { PaymentCancelComponent } from './components/view/payment-cancel/payment-cancel.component';
 
 export const routes: Routes = [
     {
@@ -72,6 +75,9 @@ export const routes: Routes = [
         component: AuthLayoutComponent,
         children: [
             { path: 'proposal', component: ProposalComponent },
+            { path: 'payments', component: PaymentsComponent },
+            { path: 'payment-success', component: PaymentSuccessComponent },
+            { path: 'payment-cancel', component: PaymentCancelComponent },
             { path: 'stripe', component: StripeComponent },
         ]
     }

@@ -1,0 +1,14 @@
+<div *ngIf="isRedirecting" class="flex flex-col items-center justify-center mt-6 space-y-2">
+    <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
+    <p class="text-sm text-gray-600">Redirecting to secure checkout...</p>
+</div>
+
+<div *ngIf="!isRedirecting" class="text-center space-y-4">
+    <h2 class="text-2xl font-semibold">Payment Options</h2>
+    <p>Total: ${{ invoice?.total }} — Due Today: ${{ installments[0]?.amount }}</p>
+
+    <button class="btn btn-success" (click)="payNow()" [disabled]="isRedirecting">
+        {{ isRedirecting ? 'Redirecting...' : 'Pay Now' }}
+    </button>
+    <button routerLink="view/payment-cancel" class="btn btn-secondary">Pay Later</button>
+</div>

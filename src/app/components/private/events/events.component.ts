@@ -52,9 +52,6 @@ export class EventsComponent {
   proposalUploadEnabled: boolean = false;
   @ViewChild('proposalFileInput') proposalFileInput?: ElementRef<HTMLInputElement>;
 
-  toastMessage: string = '';
-  toastType: 'success' | 'error' = 'success';
-
   constructor(
     private supabase: SupabaseService, 
     private router: Router,
