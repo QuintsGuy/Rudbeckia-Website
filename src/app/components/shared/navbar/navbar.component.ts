@@ -12,7 +12,7 @@ import { filter } from 'rxjs';
 })
 export class NavbarComponent {
   hideLoginButton = false;
-  private hiddenRoutes = ['/auth/passcode', '/view/proposal', '/auth/login', '/contact'];
+  private hiddenRoutes = ['/auth/passcode', '/terms-and-conditions', '/view/proposal', '/auth/login', '/contact', '/view/payments', '/view/payment-success', '/view/payment-cancel'];
   
   constructor(private router: Router) {
     this.router.events

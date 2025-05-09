@@ -1,14 +1,61 @@
-<div *ngIf="isRedirecting" class="flex flex-col items-center justify-center mt-6 space-y-2">
-    <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
-    <p class="text-sm text-gray-600">Redirecting to secure checkout...</p>
-</div>
+<div class="min-h-[calc(100vh-76px)] bg-gradient-to-b from-[#d49b79] to-[#f5e6dc] flex items-center justify-center p-6">
+    <div class="bg-white bg-opacity-90 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-full max-w-md text-gray-800 font-serif transform -translate-y-6">
+        <h2 class="text-4xl font-bold mb-2 text-center text-[#b66a53] font-display">Secure Payment</h2>
+        <p class="text-sm text-gray-500 text-center mb-6">Please review your invoice and select a payment option below.</p>
+    
+        <div class="space-y-3 mb-6">
+            <div class="flex justify-between text-base">
+                <span>Subtotal:</span>
+                <span>${{ invoice?.subtotal }}</span>
+            </div>
+            <div class="flex justify-between text-base">
+                <span>Tax ({{ invoice?.tax_rate || 0 }}%):</span>
+                <span>${{ invoice?.tax_amount }}</span>
+            </div>
+            <div class="flex justify-between text-lg font-semibold border-t border-gray-300 pt-2">
+                <span>Total Due:</span>
+                <span>${{ invoice?.total }}</span>
+            </div>
+        </div>
+    
+        <div class="mb-4">
+            <p class="text-base font-medium text-[#b66a53] mb-2">Installment Plan</p>
+            <ul class="text-sm text-gray-700 space-y-1">
+                <li *ngFor="let installment of installments">
+                    • {{ installment.description }} – <span class="font-semibold">${{ installment.amount }}</span> due on {{ installment.due_date | date:'mediumDate' }}
+                </li>
+            </ul>
+        </div>
 
-<div *ngIf="!isRedirecting" class="text-center space-y-4">
-    <h2 class="text-2xl font-semibold">Payment Options</h2>
-    <p>Total: ${{ invoice?.total }} — Due Today: ${{ installments[0]?.amount }}</p>
-
-    <button class="btn btn-success" (click)="payNow()" [disabled]="isRedirecting">
-        {{ isRedirecting ? 'Redirecting...' : 'Pay Now' }}
-    </button>
-    <button routerLink="view/payment-cancel" class="btn btn-secondary">Pay Later</button>
+        <div class="bg-[#f5e6dc] border border-[#d49b79] text-[#b66a53] text-sm rounded-md p-4 mb-6">
+            <p class="mb-2 font-semibold">Payment Reminder</p>
+            <ul class="list-disc list-inside space-y-1">
+                <li>Initial deposit must be submitted by the date listed above. Late payments may be subject to a fee.</li> 
+                <li>If more time is needed to acquire funds, we've emailed you a link to process the deposit payment</li>
+                <li>Automated email reminders will be sent <span class="font-medium">one week prior</span> to each upcoming installment due date.</li>
+            </ul>
+        </div>
+    
+        <div *ngIf="isRedirecting" class="flex flex-col items-center justify-center space-y-3 mb-4">
+            <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#b66a53]"></div>
+            <p class="text-sm text-gray-600">Redirecting to secure Stripe checkout...</p>
+        </div>
+    
+        <div *ngIf="!isRedirecting" class="flex flex-col space-y-4">
+            <button
+                class="w-full bg-[#b66a53] hover:bg-[#9a5845] text-white font-medium py-2 rounded-lg transition duration-300"
+                (click)="payNow()"
+                [disabled]="isRedirecting"
+            >
+                {{ isRedirecting ? 'Redirecting...' : 'Pay Now - $' + installments[0]?.amount }}
+            </button>
+    
+            <button
+                routerLink="view/payment-cancel"
+                class="w-full border border-[#b66a53] text-[#b66a53] hover:bg-[#f5e6dc] font-medium py-2 rounded-lg transition duration-300"
+            >
+                Pay Later
+            </button>
+        </div>
+    </div>
 </div>

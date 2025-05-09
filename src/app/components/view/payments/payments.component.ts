@@ -3,11 +3,13 @@ import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SupabaseService } from '../../../services/supabase.service';
 import { ToastService } from '../../../services/toast.service';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-payments',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, HttpClientModule],
   templateUrl: './payments.component.html',
   styleUrl: './payments.component.css'
 })
@@ -18,7 +20,7 @@ export class PaymentsComponent implements OnInit {
   installments: any[] = [];
   isRedirecting: boolean = false;
 
-  constructor(private supabase: SupabaseService, private toast: ToastService) {}
+  constructor(private http: HttpClient, private supabase: SupabaseService, private toast: ToastService) {}
   
   ngOnInit(): void {
     const state = history.state;
@@ -70,19 +72,27 @@ export class PaymentsComponent implements OnInit {
     
     const deposit = this.installments?.[0];
     if (!deposit) return;
+
+    console.log(deposit);
+
+    try {
+      const response: any = await firstValueFrom(
+        this.http.post('https://dzyjvjalyvezqqvknazd.supabase.co/functions/v1/create-checkout-session', 
+          { installment_id: deposit.installment_id }
+        )
+      );
   
-    // const { data, error } = await this.supabase.invokeFunction('create-checkout-session', {
-    //   body: { installment_id: deposit.installment_id }
-    // });
-
-    // if (error) {
-    //   console.error("Failed to create checkout session: ", error);
-    //   this.toast.showToast('Failed to create checkout session', 'error');
-    //   return;
-    // }
-
-    // if (data?.url) {
-    //   window.location.href = data.url;
-    // }
+      console.log('Response: ', response);
+  
+      if (response?.url) {
+        window.location.href = response.url;
+      } else {
+        console.error('Stripe did not return a url');
+        this.toast.showToast('Failed to get Stripe checkout URL', 'error');
+      }
+    } catch (err) {
+      console.error("Failed to create checkout session: ", err);
+      this.toast.showToast('Failed to create checkout session', 'error');
+    }
   }
 }
