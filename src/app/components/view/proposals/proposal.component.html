@@ -41,21 +41,32 @@
                 </span>
             </label>
     
-            <!-- Action Buttons -->
-            <div class="flex justify-center space-x-6 pt-4">
-                <button
-                    class="px-6 py-2 rounded-md bg-[#3b8d5d] hover:bg-[#2d724a] text-white font-semibold transition duration-300 disabled:opacity-50"
-                    [disabled]="!agreedToTerms || !digitallySigned"
-                    (click)="acceptProposal()"
-                >
-                    Accept Proposal
-                </button>
-                <button
-                    class="px-6 py-2 rounded-md bg-[#b83e3e] hover:bg-[#932f2f] text-white font-semibold transition duration-300"
-                    (click)="declineProposal()"
-                >
-                    Decline Proposal
-                </button>
+            <div class="flex justify-center pt-4">
+                <ng-container *ngIf="!isLoading; else redirectingSpinner">
+                    <div class="flex space-x-6">
+                        <button
+                            class="px-6 py-2 rounded-md bg-[#3b8d5d] hover:bg-[#2d724a] text-white font-semibold transition duration-300 disabled:opacity-50"
+                            [disabled]="!agreedToTerms || !digitallySigned"
+                            (click)="acceptProposal()"
+                        >
+                            Accept Proposal
+                        </button>
+                
+                        <button
+                            class="px-6 py-2 rounded-md bg-[#b83e3e] hover:bg-[#932f2f] text-white font-semibold transition duration-300"
+                            (click)="declineProposal()"
+                        >
+                            Decline Proposal
+                        </button>
+                    </div>
+                </ng-container>
+                
+                <ng-template #redirectingSpinner>
+                    <div class="flex flex-col items-center justify-center space-y-3">
+                        <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#b66a53]"></div>
+                        <p class="text-sm text-gray-600">Parsing proposal and redirecting to secure checkout...</p>
+                    </div>
+                </ng-template>
             </div>
         </div>
     </div>

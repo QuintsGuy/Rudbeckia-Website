@@ -18,6 +18,7 @@ export class ProposalComponent implements OnInit {
   passcodeData: any;
   event: any;
   proposal: any;
+  isLoading: boolean = false;
 
   constructor(private http: HttpClient, private router: Router, private supabase: SupabaseService) {}
 
@@ -72,15 +73,12 @@ export class ProposalComponent implements OnInit {
     if (!this.proposal || !this.event) return;
 
     const payload = {
-      proposal_path: this.proposal.pdf_url.replace(
-        'https://dzyjvjalyvezqqvknazd.supabase.co/storage/v1/object/public/proposals/',
-        ''
-      ),
+      proposal_path: this.proposal.pdf_url.replace('https://dzyjvjalyvezqqvknazd.supabase.co/storage/v1/object/public/proposals/', ''),
       proposal_id: this.proposal.proposal_id,
       event_id: this.event.event_id
     };
 
-    console.log(payload);
+    this.isLoading = true;
 
     try {      
       const res: any = await this.http.post('https://dzyjvjalyvezqqvknazd.supabase.co/functions/v1/parse-proposal', 
@@ -100,6 +98,7 @@ export class ProposalComponent implements OnInit {
       });
     } catch (err) {
       console.error('Parsing failed:', err);
+      this.isLoading = false;
     }
   }
 
