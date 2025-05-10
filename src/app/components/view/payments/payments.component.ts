@@ -77,7 +77,7 @@ export class PaymentsComponent implements OnInit {
 
     try {
       const response: any = await firstValueFrom(
-        this.http.post('https://dzyjvjalyvezqqvknazd.supabase.co/functions/v1/create-checkout-session', 
+        this.http.post('https://dzyjvjalyvezqqvknazd.supabase.co/functions/v1/create-payment-session', 
           { installment_id: deposit.installment_id }
         )
       );
