@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { RouterLink, RouterModule } from '@angular/router';
+
+declare var Flowbite: any;
 
 @Component({
   selector: 'app-landing',
@@ -9,6 +11,11 @@ import { RouterLink, RouterModule } from '@angular/router';
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })
-export class LandingComponent {
-
+export class LandingComponent implements AfterViewInit {
+  ngAfterViewInit(): void {
+    // ✅ Initialize Flowbite carousel after the view is rendered
+    if (Flowbite?.init) {
+      Flowbite.init();
+    }
+  }
 }
