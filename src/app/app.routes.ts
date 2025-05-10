@@ -28,6 +28,7 @@ import { TermsAndConditionsComponent } from './components/public/terms-and-condi
 import { PaymentsComponent } from './components/view/payments/payments.component';
 import { PaymentSuccessComponent } from './components/view/payment-success/payment-success.component';
 import { PaymentCancelComponent } from './components/view/payment-cancel/payment-cancel.component';
+import { ManagePaymentsComponent } from './components/private/manage-payments/manage-payments.component';
 
 export const routes: Routes = [
     {
@@ -68,6 +69,7 @@ export const routes: Routes = [
             { path: 'inbox', component: InboxComponent },
             { path: 'settings', component: ManageSettingsComponent },
             { path: 'events', component: EventsComponent },
+            { path: 'payments', component: ManagePaymentsComponent },
         ]
     },
     {

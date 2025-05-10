@@ -100,6 +100,16 @@ export class ProposalComponent implements OnInit {
       console.error('Parsing failed:', err);
       this.isLoading = false;
     }
+
+    const { error: updateEventError} = await this.supabase.getClient()
+      .from('events')
+      .update({ status: 'proposal accepted' })
+      .eq('event_id', this.event.event_id);
+
+    if (updateEventError) {
+      console.log('Updating event status failed.', 'error');
+      return;
+    }
   }
 
   declineProposal(): void {

@@ -381,14 +381,14 @@ export class EventsComponent {
     }
 
     // Step 3: Deactivate active proposal before inserting the new one
-    const { error: updateError } = await this.supabase.getClient()
+    const { error: updateProposalError } = await this.supabase.getClient()
       .from('proposals')
       .update({ is_active: false })
       .eq('event_id', this.selectedEvent.event_id)
       .eq('is_active', true);
 
-    if (updateError) {
-      console.error('Error updating active proposal: ', updateError);
+    if (updateProposalError) {
+      console.error('Error updating active proposal: ', updateProposalError);
       this.toast.showToast('Modifying proposal failed.', 'error');
       return;
     }
@@ -415,32 +415,50 @@ export class EventsComponent {
       .upload(filePath, this.proposalFile, { upsert: true });
 
     if (uploadError) {
-      this.toast.showToast('Uploading proposal failed.', 'error');
+      console.log('Uploading proposal failed.', 'error');
+      this.toast.showToast('Uploading proposal failed.');
       this.actionLoading = false;
       return;
     }
 
-    //this.sendProposalEmail(this.selectedEvent);
-    this.selectedEvent.status = 'Client Review';
+    const { error: updateEventError} = await this.supabase.getClient()
+      .from('events')
+      .update({ status: 'client review' })
+      .eq('event_id', this.selectedEvent.event_id);
+
+    if (updateEventError) {
+      console.log('Updating event status failed.', 'error');
+      this.toast.showToast('Updating event status failed.');
+      this.actionLoading = false;
+      return;
+    }
+
+    var email = this.selectedEvent.client.email;
+    var name = `${this.selectedEvent.client.first_name} ${this.selectedEvent.client.last_name}`;
+    var passcode = this.selectedEvent.passcode.passcode;
+    
+    this.sendProposalEmail(email, name, passcode);
     await this.fetchEvents();
     this.closeProposalModal();
-    console.log(this.selectedEvent);
     this.toast.showToast('Proposal uploaded successfully!', 'success');
     this.proposalFile = null;
     this.proposalUploadEnabled = false;
     this.actionLoading = false;
   }
 
-  // async sendProposalEmail(event: any) {
-  //   await fetch('https://<your-project-id>.functions.supabase.co/send-proposal-email', {
-  //     method: 'POST',
-  //     headers: { 'Content-Type': 'application/json' },
-  //     body: JSON.stringify({
-  //       to: event.client.email,
-  //       passcode: event.passcode
-  //     })
-  //   });
-  // }
+  async sendProposalEmail(email: string, name: string, passcode: string): Promise<string> {
+    return fetch('https://dzyjvjalyvezqqvknazd.supabase.co/functions/v1/send-proposal-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, name, passcode })
+    }).then(async (response) => {
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Email failed to send');
+      }
+      return data.message;
+    });
+  }
 
   closeProposalModal() {
     const modal = document.getElementById('proposalModal');
