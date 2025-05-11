@@ -107,7 +107,7 @@ export class ProposalComponent implements OnInit {
       .eq('event_id', this.event.event_id);
 
     if (updateEventError) {
-      console.log('Updating event status failed.', 'error');
+      console.log('Updating event status failed.', updateEventError);
       return;
     }
   }

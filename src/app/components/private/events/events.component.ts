@@ -427,7 +427,7 @@ export class EventsComponent {
       .eq('event_id', this.selectedEvent.event_id);
 
     if (updateEventError) {
-      console.log('Updating event status failed.', 'error');
+      console.log('Updating event status failed.', updateEventError);
       this.toast.showToast('Updating event status failed.');
       this.actionLoading = false;
       return;
