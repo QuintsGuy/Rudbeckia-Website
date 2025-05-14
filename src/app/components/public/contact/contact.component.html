@@ -1,16 +1,16 @@
 <section
     style="background-image: url('assets/images/landing/IMG_0706.JPG');" 
-    class="flex bg-no-repeat font-body bg-cover bg-center bg-gray-500 bg-blend-multiply w-full min-h-screen"
+    class="flex flex-col xl:flex-row bg-no-repeat font-body bg-cover bg-center mt-10 bg-gray-500 bg-blend-multiply w-full min-h-screen"
 >
-    <div class="w-1/2 pl-20 min-h-screen flex flex-col items-center justify-center">
-        <img src="assets/images/landing/Logo_inverted.png" class="max-h-[500px] mx-auto rounded-t-full">
-        <h2 class="mt-4 text-6xl font-display font-extrabold text-white">Flowers Made Simple</h2>
+    <div class="hidden xl:flex xl:w-1/2 xl:pl-20 min-h-[300px] xl:min-h-screen flex-col items-center justify-center">
+        <img src="assets/images/landing/Logo_inverted.png" class="max-h-[300px] xl:max-h-[500px] mx-auto rounded-t-full">
+        <h2 class="mt-4 text-2xl xl:text-6xl font-display font-extrabold text-white">Flowers Made Simple</h2>
     </div>
-    <div class="w-1/2 pr-20 pt-10">
-        <div class="px-4 w-4/5 text-center mb-5 pt-2 mx-auto">
-            <h2 class="mb-1 text-6xl font-display font-extrabold text-white">Contact Us</h2>
+    <div class="w-full xl:w-1/2 px-4 py-10">
+        <div class="px-4 w-4/5 text-center mb-2 xl:mb-5 pt-2 mx-auto">
+            <h2 class="mb-1 text-4xl xl:text-6xl font-display font-extrabold text-white">Submit Inquiry</h2>
         </div>
-        <form id="contactBox" [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 max-w-[850px] mx-auto gap-x-6 gap-y-3 p-8 rounded-lg shadow-sm sm:grid-cols-2 backdrop-blur-md">
+        <form id="contactBox" [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-2 max-w-[850px] mx-auto gap-x-6 gap-y-2 p-4 md:p-6 xl:p-8 rounded-lg shadow-sm sm:grid-cols-2 backdrop-blur-md">
             <div>
                 <label for="firstName" class="block mb-1 text-sm font-medium">First Name*</label>
                 <input 

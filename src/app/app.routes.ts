@@ -40,7 +40,7 @@ export const routes: Routes = [
             { path: 'about', component: AboutComponent },
             { path: 'services', component: ServicesComponent },
             { path: 'reviews', component: ReviewsComponent },
-            { path: 'contact', component: ContactComponent },
+            { path: 'inquire', component: ContactComponent },
             { path: 'password-recovery', component: PasswordRecoveryComponent},
             { path: 'terms-and-conditions', component: TermsAndConditionsComponent},
         ]
