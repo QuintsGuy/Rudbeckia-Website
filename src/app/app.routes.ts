@@ -47,7 +47,7 @@ export const routes: Routes = [
     },
     {
         path: 'auth',
-        component: AuthLayoutComponent,
+        component: PublicLayoutComponent,
         children: [
             { path: 'login', component: LoginComponent },
             { path: 'password-recovery', component: PasswordRecoveryComponent },
@@ -74,7 +74,7 @@ export const routes: Routes = [
     },
     {
         path: 'view',
-        component: AuthLayoutComponent,
+        component: PublicLayoutComponent,
         children: [
             { path: 'proposal', component: ProposalComponent },
             { path: 'payments', component: PaymentsComponent },
