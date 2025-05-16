@@ -2,19 +2,16 @@
     class="w-full flex min-h-screen items-center bg-no-repeat bg-cover bg-center bg-gray-700 bg-blend-multiply bg-opacity-40" 
     style="background-image: url('assets/images/landing/IMG_0695.jpg');"
 >
-    <div class="w-full flex flex-col items-center justify-center px-6 mx-auto">
+    <div class="w-full flex flex-col items-center justify-center px-4">
         <div id="signInBox" class="w-full bg-white/70 rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0 backdrop-blur-md">
             <div class="p-6 space-y-4 md:space-y-6 lg:space-y-8 sm:p-8">
-                <h1 class="text-4xl font-display font-medium leading-tight tracking-tight text-center">
-                    Welcome Back
-                </h1>
+                <h1 class="text-3xl font-display font-medium leading-tight tracking-tight text-center">Welcome Back</h1>
                 
                 <!--Reactive Form Setup-->
                 <form 
                     [formGroup]="loginForm"
                     (ngSubmit)="onSubmit()"
-                    class="w-full font-body max-w-md space-y-6 md:space-y-4 xl:max-w-xl"
-                    style="margin-top: 10px;"
+                    class="w-full font-body max-w-md space-y-3 md:space-y-4 xl:max-w-xl"
                 >                    
                     <!--Email-->
                     <div>
