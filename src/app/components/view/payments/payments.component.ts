@@ -111,13 +111,6 @@ export class PaymentsComponent implements OnInit {
       );
 
       console.log('Response: ', response);
-
-      if (response?.url) {
-        window.location.href = response.url;
-      } else {
-        console.error('Stripe did not return a url');
-        this.toast.showToast('Failed to send email to client with checkout URL', 'error');
-      }
     } catch (err) {
       console.error("Failed to create checkout session: ", err);
       this.toast.showToast('Failed to create checkout session', 'error');
