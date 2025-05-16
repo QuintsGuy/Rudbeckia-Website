@@ -95,4 +95,32 @@ export class PaymentsComponent implements OnInit {
       this.toast.showToast('Failed to create checkout session', 'error');
     }
   }
+
+  async payLater() {
+    this.isRedirecting = true;
+
+    const deposit = this. installments?.[0];
+    if (!deposit) return;
+    console.log(deposit);
+
+    try {
+      const response: any = await firstValueFrom(
+        this.http.post('https://dzyjvjalyvezqqvknazd.supabase.co/functions/v1/create-pay-later-session', 
+          { installment_id: deposit.installment_id }
+        )
+      );
+
+      console.log('Response: ', response);
+
+      if (response?.url) {
+        window.location.href = response.url;
+      } else {
+        console.error('Stripe did not return a url');
+        this.toast.showToast('Failed to send email to client with checkout URL', 'error');
+      }
+    } catch (err) {
+      console.error("Failed to create checkout session: ", err);
+      this.toast.showToast('Failed to create checkout session', 'error');
+    }
+  }
 }
