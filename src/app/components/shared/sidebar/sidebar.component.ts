@@ -12,13 +12,13 @@ import { initFlowbite } from 'flowbite';
   styleUrl: './sidebar.component.css'
 })
 export class SidebarComponent implements AfterViewInit {
-  ngAfterViewInit(): void {
-    initFlowbite();
-  }
-  
   unreadCount = 0;
   
   constructor(private authService: AuthService) {}
+
+  ngAfterViewInit(): void {
+    initFlowbite();
+  }
   
   Logout() {
     this.authService.logout();
