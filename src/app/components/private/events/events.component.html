@@ -3,8 +3,8 @@
     class="bg-no-repeat bg-cover bg-center py-3 sm:py-8 min-h-[100vh]"
 >
     <div class="absolute inset-0"></div>
-    <div class="mx-auto max-w-screen-3xl lg:px-12">
-        <div class="relative shadow-md sm:rounded-lg overflow-hidden" style="background-color: rgba(195, 145, 110, 0.88); backdrop-filter: blur(5px); border: 3px solid rgb(255, 255, 255);">
+    <div class="mx-auto max-w-screen-3xl px-6 lg:px-12">
+        <div class="relative shadow-md rounded-lg overflow-hidden" style="background-color: rgba(195, 145, 110, 0.88); backdrop-filter: blur(5px); border: 3px solid rgb(255, 255, 255);">
             <div class="border-b mx-4">
                 <div class="flex items-center justify-between space-x-4 pt-3">
                     <div class="flex-1 flex items-center space-x-3">
@@ -103,12 +103,10 @@
                 <table class="w-full text-sm text-left">
                     <thead class="text-xs uppercase">
                         <tr>
-                            <th scope="col" class="pl-12 py-3">Event Type</th>
+                            <th scope="col" class="px-4 py-3">Event Type</th>
                             <th scope="col" class="px-4 py-3">Client</th>
                             <th scope="col" class="px-4 py-3">Event Date</th>
                             <th scope="col" class="px-4 py-3">Venue</th>
-                            <th scope="col" class="px-4 py-3">Budget</th>
-                            <th scope="col" class="px-4 py-3">Coordinator</th>
                             <th scope="col" class="px-4 py-3">Status</th>
                             <th scope="col" class="px-4 py-3">Action</th>
                             <th scope="col" class="px-4 py-3">Modify</th>
@@ -119,23 +117,17 @@
                             *ngFor="let event of events"
                             class="border-b bg-[rgb(255,255,255)] text-black hover:bg-gray-200"
                         >
-                            <td class="pl-12 px-4 py-3">
+                            <td class="pl-4 px-4 py-3">
                                 {{ event.event_type | titlecase }}
                             </td>
                             <td class="px-4 py-3">
                                 {{ event.client.first_name }} {{ event.client.last_name }}
                             </td>
                             <td class="px-4 py-3">
-                                {{ event.event_date }}
+                                {{ event.event_date | date: 'MMMM d, y' }}
                             </td>
                             <td class="px-4 py-3">
                                 {{ event.venue }}
-                            </td>
-                            <td class="px-4 py-3">
-                                ${{ event.budget }}
-                            </td>
-                            <td class="px-4 py-3">
-                                {{ event.coordinator.name }}
                             </td>
                             <td class="px-4 py-3">
                                 {{ event.status | titlecase }}
@@ -143,9 +135,9 @@
                             <td class="px-4 py-3">
                                 {{ event.todo | titlecase }}
                             </td>
-                            <td class="pl-4 py-3 flex gap-2">
-                                <button (click)="openEventModal(event)" class="px-3 py-1 text-xs text-white bg-blue-600 rounded hover:bg-blue-700">Details</button>
-                                <button (click)="openProposalModal(event)" class="px-3 text-xs text-white bg-green-600 rounded hover:bg-green-700">Proposal</button>
+                            <td class="px-4 py-3 flex flex-col lg:flex-row gap-2">
+                                <button (click)="openEventModal(event)" class="px-3 py-2 text-xs text-white bg-blue-600 rounded hover:bg-blue-700">Details</button>
+                                <button (click)="openProposalModal(event)" class="px-3 py-2 text-xs text-white bg-green-600 rounded hover:bg-green-700">Proposal</button>
                             </td>
                         </tr>
                     </tbody>

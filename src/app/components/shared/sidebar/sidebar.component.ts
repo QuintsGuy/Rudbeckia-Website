@@ -18,13 +18,4 @@ export class SidebarComponent {
   Logout() {
     this.authService.logout();
   }
-
-  collapseMenu() {
-    const toggleButton = document.querySelector('[data-collapse-toggle="mobile-menu-2"]') as HTMLElement;
-    const menu = document.getElementById('mobile-menu-2');
-  
-    if (toggleButton && menu && !menu.classList.contains('hidden')) {
-      setTimeout(() => toggleButton.click(), 10);
-    }
-  }
 }
