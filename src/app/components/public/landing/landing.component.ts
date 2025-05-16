@@ -2,8 +2,6 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component } from '@angular/core';
 import { RouterLink, RouterModule } from '@angular/router';
 
-declare var Flowbite: any;
-
 @Component({
   selector: 'app-landing',
   standalone: true,
