@@ -1,13 +1,13 @@
-<div class="min-h-screen bg-gradient-to-b from-[#d49b79] to-[#f5e6dc] flex items-center justify-center p-6">
-    <div class="bg-white bg-opacity-90 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-full max-w-5xl text-gray-800 font-serif">
+<div class="min-h-screen bg-gradient-to-b from-[#d49b79] to-[#f5e6dc] flex items-center justify-center p-4 md:p-6">
+    <div class="bg-white bg-opacity-90 backdrop-blur-lg p-4 md:p-6 lg:px-8 rounded-2xl shadow-2xl w-full max-w-5xl text-gray-800 font-serif mt-12">
 
-        <h1 class="text-4xl font-bold mb-6 text-center text-[#b66a53] font-display">Proposal Preview</h1>
+        <h1 class="text-3xl md:text-4xl font-bold mb-3 text-center text-[#b66a53] font-display">Proposal Preview</h1>
     
         <ng-container *ngIf="proposal?.pdf_url; else loadingOrError">
             <iframe
                 [src]="proposal.pdf_url | safeUrl"
                 type="application/pdf"
-                class="w-full h-[75vh] rounded-lg border shadow-inner"
+                class="w-full h-[50vh] md:h-[55vh] rounded-lg border shadow-inner"
             ></iframe>
         </ng-container>
     
@@ -16,7 +16,7 @@
         </ng-template>
     
         <!-- Terms Agreement Section -->
-        <div class="mt-8 space-y-5">
+        <div class="mt-8 space-y-5 font-body">
             <!-- Checkbox 1: Terms & Conditions -->
             <label class="flex items-start space-x-3">
                 <input type="checkbox" [(ngModel)]="agreedToTerms" class="mt-1 accent-pink-600" />
@@ -34,7 +34,7 @@
             </label>
     
             <!-- Checkbox 2: Digital Signature -->
-            <label class="flex items-start space-x-3">
+            <label class="flex items-start space-x-3 font-body">
                 <input type="checkbox" [(ngModel)]="digitallySigned" class="mt-1 accent-pink-600" />
                 <span class="text-sm text-gray-700">
                     Checking this box serves as a digital signature of agreement to the displayed proposal above.
@@ -64,7 +64,7 @@
                 <ng-template #redirectingSpinner>
                     <div class="flex flex-col items-center justify-center space-y-3">
                         <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#b66a53]"></div>
-                        <p class="text-sm text-gray-600">Parsing proposal and redirecting to secure checkout...</p>
+                        <p class="text-sm font-body text-gray-600">Parsing proposal... This may take a few moments</p>
                     </div>
                 </ng-template>
             </div>

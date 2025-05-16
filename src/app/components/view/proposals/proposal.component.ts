@@ -40,6 +40,7 @@ export class ProposalComponent implements OnInit {
           *,
           event:events (
             event_id,
+            client_id,
             proposal:proposals (
               proposal_id,
               pdf_url,
@@ -72,24 +73,65 @@ export class ProposalComponent implements OnInit {
   async acceptProposal() {
     if (!this.proposal || !this.event) return;
 
-    const payload = {
+    const proposalPayload = {
       proposal_path: this.proposal.pdf_url.replace('https://dzyjvjalyvezqqvknazd.supabase.co/storage/v1/object/public/proposals/', ''),
       proposal_id: this.proposal.proposal_id,
-      event_id: this.event.event_id
+      event_id: this.event.event_id,
+      client_id: this.event.client_id
     };
 
     this.isLoading = true;
 
     try {      
-      const res: any = await this.http.post('https://dzyjvjalyvezqqvknazd.supabase.co/functions/v1/parse-proposal', 
-        payload,
+      const parseResponse: any = await this.http.post('https://dzyjvjalyvezqqvknazd.supabase.co/functions/v1/parse-proposal', 
+        proposalPayload,
         {
           headers: {
             'Content-Type': 'application/json'
           }
         }
       ).toPromise();
-      console.log('Proposal parsed:', res);
+      const invoiceId = parseResponse.invoice_id;
+      const { data: installmentData, error: fetchError } = await this.supabase.getClient()
+        .from("installments")
+        .select('*, client:clients (*)')
+        .eq('invoice_id', invoiceId)
+        .eq('description', 'Deposit')
+        .single()
+
+      if (fetchError) {
+        console.error("Error fetching installment data: ", fetchError);
+      }
+
+      const { error: updateError } = await this.supabase.getClient()
+        .from("installments")
+        .update({ status: "pending"})
+        .eq("installment_id", installmentData.installment_id)
+
+      if (updateError) {
+        console.error("Error updating installment data: ", updateError);
+      }
+      
+      console.log(installmentData);
+
+      const emailPayload = {
+        name: installmentData.client.first_name,
+        email: installmentData.client.email,
+        amount: installmentData.amount,
+        expiresAt: installmentData.due_date,
+        accessToken: installmentData.access_token
+      }
+      const emailResponse: any = await this.http.post('https://dzyjvjalyvezqqvknazd.supabase.co/functions/v1/send-installment-email',
+        emailPayload,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      ).toPromise();
+
+      console.log("Email Response: ", emailResponse);
+
       this.router.navigate(['/view/payments'], {
         state: {
           proposal_id: this.proposal.proposal_id,
