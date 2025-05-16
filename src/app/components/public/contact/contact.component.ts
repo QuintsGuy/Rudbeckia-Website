@@ -54,7 +54,7 @@ export class ContactComponent {
         email: formValue.email,
         phone: formValue.phone
       }], { onConflict: 'email' })
-      .select('client_id')
+      .select('*')
       .single();
 
     if (clientError) {
@@ -98,6 +98,9 @@ export class ContactComponent {
         is_read: false
     }]);
 
+    const fullName = `${formValue.firstName} ${formValue.lastName}`;
+    this.sendInquiryEmails(formValue.email, fullName, formValue.phone, formValue.eventType, formValue.eventDate, formValue.venue, formValue.message);
+
     // Handle any errors
     if (inquiryError) {
       console.error('❌ Error submitting contact form:', inquiryError);
@@ -108,6 +111,20 @@ export class ContactComponent {
     }
 
     alert("Submission successful! Please check your email for confirmation.");
+  }
+
+  async sendInquiryEmails(email: string, name: string, phone: string, event_type: string, event_date: string, venue: string, message: string): Promise<string> {
+    return fetch('https://dzyjvjalyvezqqvknazd.supabase.co/functions/v1/handle-inquiry-emails', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, name, phone, event_type, event_date, venue, message })
+    }).then(async (response) => {
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Emails failed to send');
+      }
+      return data.message;
+    });
   }
 
   formatPhoneNumber(event: any) {
