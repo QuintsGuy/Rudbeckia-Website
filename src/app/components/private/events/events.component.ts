@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { SupabaseService } from '../../../services/supabase.service';
 import { Router } from '@angular/router';
@@ -13,7 +13,7 @@ import { ToastService } from '../../../services/toast.service';
   templateUrl: './events.component.html',
   styleUrl: './events.component.css'
 })
-export class EventsComponent {
+export class EventsComponent implements OnInit {
   events: any[] = [];
   selectedEvent: any = null;
   loading: boolean = true;
@@ -107,7 +107,7 @@ export class EventsComponent {
     
     if (error) {
       console.error('Failed to load events:', error.message);
-      this.toast.showToast('Failed to load events:' + error.message, 'error');
+      this.toast.showToast('Failed to load events', 'error');
     } else {
       this.events = data || [];
       this.totalRecords = count || 0;
