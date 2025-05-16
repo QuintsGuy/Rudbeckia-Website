@@ -13,9 +13,6 @@ declare var Flowbite: any;
 })
 export class LandingComponent implements AfterViewInit {
   ngAfterViewInit(): void {
-    // ✅ Initialize Flowbite carousel after the view is rendered
-    if (Flowbite?.init) {
-      Flowbite.init();
-    }
+    initFlowbite();
   }
 }
