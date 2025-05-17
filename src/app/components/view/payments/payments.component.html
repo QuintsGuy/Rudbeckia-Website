@@ -1,61 +1,122 @@
-<div class="min-h-screen bg-gradient-to-b from-[#d49b79] to-[#f5e6dc] flex items-center justify-center p-6">
-    <div class="bg-white bg-opacity-90 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-full max-w-md text-gray-800 font-serif transform -translate-y-6">
+<div class="min-h-screen bg-gradient-to-b from-[#d49b79] to-[#f5e6dc] flex items-center justify-center p-4 md:p-8">
+    <div class="bg-white bg-opacity-90 backdrop-blur-md px-4 py-6 md:p-8 rounded-2xl shadow-2xl w-full max-w-xl md:mt-0 text-gray-800 font-lora transform -translate-y-6" style="margin-top: 80px">
         <h2 class="text-4xl font-bold mb-2 text-center text-[#b66a53] font-display">Secure Payment</h2>
-        <p class="text-sm text-gray-500 text-center mb-6">Please review your invoice and select a payment option below.</p>
+        <p class="text-sm text-gray-500 text-center mb-3 md:mb-6">Please review the invoice below</p>
     
-        <div class="space-y-3 mb-6">
-            <div class="flex justify-between text-base">
+        <div class="space-y-2 mb-4 md:mb-6">
+            <div class="flex justify-between text-sm md:text-base">
                 <span>Subtotal:</span>
                 <span>${{ invoice?.subtotal }}</span>
             </div>
-            <div class="flex justify-between text-base">
+            <div class="flex justify-between text-sm md:text-base">
                 <span>Tax ({{ invoice?.tax_rate || 0 }}%):</span>
                 <span>${{ invoice?.tax_amount }}</span>
             </div>
-            <div class="flex justify-between text-lg font-semibold border-t border-gray-300 pt-2">
+            <div class="flex justify-between text-sm md:text-base">
                 <span>Total Due:</span>
                 <span>${{ invoice?.total }}</span>
             </div>
         </div>
+        <div class="mb-4 md:mb-6">
+            <div class="flex justify-between text-lg font-semibold border-t border-gray-300 pt-2">
+                <span>{{ targetInstallment?.description }}</span>
+            </div>
+            <div *ngIf="overdue" class="flex text-red-700 justify-between text-sm">
+                <span>Late Fee:</span>
+                <span class="font-semibold">${{ targetInstallment?.late_fee }}</span>
+            </div>
+            <div *ngIf="!paid && !scheduled && !canceled" class="flex justify-between text-base">
+                <span>Due Today:</span>
+                <span class="font-semibold">${{ targetInstallment?.amount }}</span>
+            </div>
+        </div>
     
-        <div class="mb-4">
-            <p class="text-base font-medium text-[#b66a53] mb-2">Installment Plan</p>
+        <div class="mb-6">
+            <p class="text-base font-medium text-[#b66a53] mb-1">Installment Plan</p>
             <ul class="text-sm text-gray-700 space-y-1">
-                <li *ngFor="let installment of installments">
-                    • {{ installment.description }} – <span class="font-semibold">${{ installment.amount }}</span> due on {{ installment.due_date | date:'mediumDate' }}
+                <li *ngFor="let installment of installments" class="flex justify-between items-center">
+                    <span
+                        [ngClass]="{
+                            'line-through text-gray-400': installment.status === 'paid',
+                            'text-gray-800': installment.status !== 'paid'
+                        }"
+                    >
+                        • {{ installment.description }} – <span class="font-semibold">${{ installment.amount }}</span> due by {{ installment.due_date | date:'mediumDate' }}
+                    </span>
+                    <svg
+                        *ngIf="installment.status === 'paid'"
+                        class="w-5 h-5 text-green-600 flex-shrink-0 ml-2"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="3"
+                        viewBox="0 0 24 24"
+                    >
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
                 </li>
             </ul>
         </div>
 
-        <div class="bg-[#f5e6dc] border border-[#d49b79] text-[#b66a53] text-sm rounded-md p-4 mb-6">
-            <p class="mb-2 font-semibold">Payment Reminder</p>
+        <div class="bg-[#f5e6dc] border border-[#d49b79] text-[#b66a53] text-sm rounded-md p-4 md:px-6 mb-4 md:mb-4">
+            <p class="mb-2 font-semibold text-base">Payment Reminder</p>
             <ul class="list-disc list-inside space-y-1">
-                <li>Initial deposit must be submitted by the date listed above. Late payments may be subject to a fee.</li> 
-                <li>If more time is needed to acquire funds, we've emailed you a link to process the deposit payment</li>
-                <li>Automated email reminders will be sent <span class="font-medium">one week prior</span> to each upcoming installment due date.</li>
+                <li>Installments are opened to payment one month prior to due date. You may make this payment any time before this link expires</li>
+                <li>Automated email notifications and reminders will be sent periodically to keep you informed of installment payment actions</li>
+                <li>Late payments may be subject to a fee</li> 
+                
             </ul>
         </div>
     
-        <div *ngIf="isRedirecting" class="flex flex-col items-center justify-center space-y-3 mb-4">
+        <div *ngIf="isRedirecting" class="flex flex-col items-center justify-center space-y-3 mb-2 md:mb-6">
             <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#b66a53]"></div>
             <p class="text-sm text-gray-600">Redirecting to secure Stripe checkout...</p>
         </div>
     
-        <div *ngIf="!isRedirecting" class="flex flex-col space-y-4">
+        <div *ngIf="!isRedirecting" class="flex flex-col text-base space-y-3">
+            
+            <div *ngIf="scheduled" class="text-center text-sm text-gray-600 bg-white bg-opacity-70 p-3 rounded-md shadow-sm">
+                <p>
+                This installment is not currently available
+                </p>
+                <p> 
+                    You will receive an email when it's time to complete this payment
+                </p>
+            </div>
+
+            <div *ngIf="overdue" class="text-center text-sm text-red-600 bg-white bg-opacity-70 p-3 rounded-md shadow-sm">
+                <p>
+                    Payment for this installment is now overdue
+                </p>
+                <p> 
+                    A late fee for an amount of $XXX has been added to the total payment
+                </p>
+            </div>
+
+            <div *ngIf="paid" class="text-center text-sm text-gray-600 bg-white bg-opacity-70 p-3 rounded-md shadow-sm">
+                <p>
+                    This installment has already been paid
+                </p>
+                <p> 
+                    You will receive an email when it's time to complete the next payment
+                </p>
+            </div>
+
+            <div *ngIf="canceled" class="text-center text-sm text-gray-600 bg-white bg-opacity-70 p-3 rounded-md shadow-sm">
+                <p>
+                    This installment has been canceled
+                </p>
+                <p> 
+                    No action is needed at this time. You will receive an email if further actions are necessary
+                </p>
+            </div>
+
             <button
-                class="w-full bg-[#b66a53] hover:bg-[#9a5845] text-white font-medium py-2 rounded-lg transition duration-300"
+                class="w-full bg-[#b66a53] hover:bg-[#9a5845] text-white font-medium py-2 rounded-md transition duration-300
+                    disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:cursor-not-allowed"
                 (click)="payNow()"
-                [disabled]="isRedirecting"
+                [disabled]="scheduled || canceled || paid"
             >
-                {{ isRedirecting ? 'Redirecting...' : 'Pay Now - $' + installments[0]?.amount }}
-            </button>
-    
-            <button
-                routerLink="/view/payment-cancel"
-                class="w-full border border-[#b66a53] text-[#b66a53] hover:bg-[#f5e6dc] font-medium py-2 rounded-lg transition duration-300"
-                (click)="payLater()"
-            >
-                Pay Later
+                {{ isRedirecting ? 'Redirecting...' : 'Pay Now' }}
             </button>
         </div>
     </div>

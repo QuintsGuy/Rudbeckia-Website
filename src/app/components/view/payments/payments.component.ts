@@ -1,91 +1,98 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { SupabaseService } from '../../../services/supabase.service';
 import { ToastService } from '../../../services/toast.service';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-payments',
   standalone: true,
-  imports: [CommonModule, RouterModule, HttpClientModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './payments.component.html',
   styleUrl: './payments.component.css'
 })
 export class PaymentsComponent implements OnInit {
+  accessToken: any;
   proposalId: any;
   eventId: any;
   invoice: any;
+  targetInstallment: any;
   installments: any[] = [];
+  overdue: boolean = false;
+  paid: boolean = false;
+  canceled: boolean = false;
+  scheduled: boolean = false;
   isRedirecting: boolean = false;
 
-  constructor(private http: HttpClient, private supabase: SupabaseService, private toast: ToastService) {}
+  constructor(private supabase: SupabaseService, private toast: ToastService, private route: ActivatedRoute) {}
   
   ngOnInit(): void {
-    const state = history.state;
-    this.proposalId = state.proposal_id;
-    this.eventId = state.event_id;
+    this.route.queryParams.subscribe(params => {
+      this.accessToken = params['token'];
+      console.log("Token from query params: ", this.accessToken);
+    })
 
-    if (this.proposalId && this.eventId) {
-      this.loadInvoiceData();
-      this.toast.showToast('Proposal Successfully Processed!', 'success');
-    } else {
-      console.error('Missing proposal or event ID');
-      this.toast.showToast('Missing proposal or event id', 'error');
+    if (!this.accessToken) {
+      console.error("Missing accessToken");
+      this.toast.showToast('Missing access token', 'error');
     }
+
+    this.loadInstallmentData();
   }
 
-  async loadInvoiceData() {
+  async loadInstallmentData() {
     const supabase = this.supabase.getClient();
-  
-    const { data: invoice, error: invoiceError } = await supabase
-      .from('invoices')
-      .select('*')
-      .eq('proposal_id', this.proposalId)
-      .single();
-  
-    if (invoiceError) {
-      console.error('Invoice fetch failed', invoiceError);
-      this.toast.showToast('Fetching invoice failed', 'error');
+
+    const { data: installmentData, error: fetchError } = await supabase
+      .from('installments')
+      .select('*, invoice:invoices (*)')
+      .eq('access_token', this.accessToken)
+      .single()
+    
+    if (fetchError) {
+      console.error('Installment fetch failed: ', fetchError);
+      this.toast.showToast('Fetching installment failed', 'error');
       return;
+    } else if (installmentData.status === 'paid') {
+      console.warn("This installment has been paid and not available anymore");
+      this.paid = true;
+    } else if (installmentData.status === 'overdue') {
+      console.warn("This installment is overdue");
+      this.overdue = true;
+    } else if (installmentData.status === 'scheduled') {
+      console.warn("This installment is schedule but not available to view yet");
+      this.scheduled = true;
+    } else if (installmentData.status === 'canceled') {
+      console.warn("This installment has been canceled and is not available anymore");
+      this.canceled = true;
     }
-  
-    const { data: installments, error: installmentError } = await supabase
+
+    const { data: otherInstallments, error: otherError } = await supabase
       .from('installments')
       .select('*')
-      .eq('invoice_id', invoice.invoice_id)
-      .order('due_date');
-  
-    if (installmentError) {
-      console.error('Installments fetch failed', installmentError);
-      this.toast.showToast('Fetching installments failed', 'error');
+      .eq('invoice_id', installmentData.invoice.invoice_id)
+      .order('due_date', { ascending: true });
+
+    if (otherError) {
+      console.error('Fetching other installments failed: ', otherError);
+      this.toast.showToast('Fetching other installments failed', 'error');
       return;
     }
-  
-    this.invoice = invoice;
-    this.installments = installments;
+
+    this.invoice = installmentData.invoice;
+    this.targetInstallment = installmentData;
+    this.installments = otherInstallments;
   }
 
   async payNow() {
     this.isRedirecting = true;
-    
-    const deposit = this.installments?.[0];
-    if (!deposit) return;
-
-    console.log(deposit);
 
     try {
-      const response: any = await firstValueFrom(
-        this.http.post('https://dzyjvjalyvezqqvknazd.supabase.co/functions/v1/create-payment-session', 
-          { installment_id: deposit.installment_id }
-        )
-      );
+      const checkoutResponse: any = await this.createCheckoutSession(this.targetInstallment.installment_id);
+      console.log('Response: ', checkoutResponse);
   
-      console.log('Response: ', response);
-  
-      if (response?.url) {
-        window.location.href = response.url;
+      if (checkoutResponse?.url) {
+        window.location.href = checkoutResponse.url;
       } else {
         console.error('Stripe did not return a url');
         this.toast.showToast('Failed to get Stripe checkout URL', 'error');
@@ -96,24 +103,17 @@ export class PaymentsComponent implements OnInit {
     }
   }
 
-  async payLater() {
-    this.isRedirecting = true;
-
-    const deposit = this. installments?.[0];
-    if (!deposit) return;
-    console.log(deposit);
-
-    try {
-      const response: any = await firstValueFrom(
-        this.http.post('https://dzyjvjalyvezqqvknazd.supabase.co/functions/v1/create-pay-later-session', 
-          { installment_id: deposit.installment_id }
-        )
-      );
-
-      console.log('Response: ', response);
-    } catch (err) {
-      console.error("Failed to create checkout session: ", err);
-      this.toast.showToast('Failed to create checkout session', 'error');
-    }
-  }
+  async createCheckoutSession(installment_id: string) {
+    return fetch('https://dzyjvjalyvezqqvknazd.supabase.co/functions/v1/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ installment_id })
+    }).then(async(response) => {
+      const data = await response.json();
+      if(!response.ok) {
+        throw new Error(data.error || 'Parsing proposal failed');
+      }
+      return data;
+    })
+  } 
 }

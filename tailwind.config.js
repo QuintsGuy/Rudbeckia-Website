@@ -13,6 +13,8 @@ module.exports = {
                 nav: ['"Marcellus"', ...defaultTheme.fontFamily.sans],
                 body: ['"Raleway"', ...defaultTheme.fontFamily.sans],
                 forum: ['"Forum"', ...defaultTheme.fontFamily.serif],
+                roboto: ['"Roboto"', ...defaultTheme.fontFamily.sans],
+                lora: ['"Lora"', ...defaultTheme.fontFamily.serif],
             }
         },
     },

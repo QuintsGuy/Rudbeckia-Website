@@ -73,25 +73,19 @@ export class ProposalComponent implements OnInit {
   async acceptProposal() {
     if (!this.proposal || !this.event) return;
 
-    const proposalPayload = {
-      proposal_path: this.proposal.pdf_url.replace('https://dzyjvjalyvezqqvknazd.supabase.co/storage/v1/object/public/proposals/', ''),
-      proposal_id: this.proposal.proposal_id,
-      event_id: this.event.event_id,
-      client_id: this.event.client_id
-    };
-
     this.isLoading = true;
 
     try {      
-      const parseResponse: any = await this.http.post('https://dzyjvjalyvezqqvknazd.supabase.co/functions/v1/parse-proposal', 
-        proposalPayload,
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      ).toPromise();
-      const invoiceId = parseResponse.invoice_id;
+      let proposal_path = this.proposal.pdf_url.replace('https://dzyjvjalyvezqqvknazd.supabase.co/storage/v1/object/public/proposals/', '');
+      let proposal_id = this.proposal.proposal_id;
+      let event_id = this.event.event_id;
+      let client_id = this.event.client_id;
+
+      const parseResponse: any = await this.parseProposal(proposal_path, proposal_id, event_id, client_id);
+      console.log(parseResponse);
+      console.log("InvoiceID: ", parseResponse.invoiceId);
+
+      const invoiceId = parseResponse.invoiceId;
       const { data: installmentData, error: fetchError } = await this.supabase.getClient()
         .from("installments")
         .select('*, client:clients (*)')
@@ -111,31 +105,22 @@ export class ProposalComponent implements OnInit {
       if (updateError) {
         console.error("Error updating installment data: ", updateError);
       }
-      
-      console.log(installmentData);
 
-      const emailPayload = {
-        name: installmentData.client.first_name,
-        email: installmentData.client.email,
-        amount: installmentData.amount,
-        expiresAt: installmentData.due_date,
-        accessToken: installmentData.access_token
-      }
-      const emailResponse: any = await this.http.post('https://dzyjvjalyvezqqvknazd.supabase.co/functions/v1/send-installment-email',
-        emailPayload,
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      ).toPromise();
+      let name = installmentData.client.first_name;
+      let email = installmentData.client.email;
+      let amount = installmentData.amount;
+      let expiresAt = installmentData.due_date;
+      let accessToken = installmentData.access_token;
+
+      console.log(name, email, amount, expiresAt, accessToken);
+
+      const emailResponse: any = await this.sendInstallmentEmail(name, email, amount, expiresAt, accessToken);
 
       console.log("Email Response: ", emailResponse);
 
       this.router.navigate(['/view/payments'], {
-        state: {
-          proposal_id: this.proposal.proposal_id,
-          event_id: this.event.event_id
+        queryParams: {
+          token: installmentData.access_token
         }
       });
     } catch (err) {
@@ -154,8 +139,49 @@ export class ProposalComponent implements OnInit {
     }
   }
 
-  declineProposal(): void {
+  async declineProposal(): Promise<void> {
     console.log('Proposal declined.');
-    // Add real rejection logic here
+    
+    const { error: updateEventError} = await this.supabase.getClient()
+      .from('events')
+      .update({ status: 'proposal declined' })
+      .eq('event_id', this.event.event_id);
+
+    if (updateEventError) {
+      console.log('Updating event status failed.', updateEventError);
+      return;
+    }
+  }
+
+  async parseProposal(proposal_path: string, proposal_id: string, event_id: string, client_id: string) {
+    return fetch('https://dzyjvjalyvezqqvknazd.supabase.co/functions/v1/parse-proposal', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ proposal_path, proposal_id, event_id, client_id })
+    }).then(async(response) => {
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Parsing proposal failed');
+      }
+      
+      return {
+        invoiceId: data.invoice_id,
+        parsedJsonText: data.parsed
+      };
+    });
+  }
+
+  async sendInstallmentEmail(name: string, email: string, amount: string, expiresAt: string, accessToken: string): Promise<string> {
+    return fetch('https://dzyjvjalyvezqqvknazd.supabase.co/functions/v1/send-installment-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, amount, expiresAt, accessToken })
+    }).then(async(response) => {
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Email failed to send');
+      }
+      return data.message;
+    })
   }
 }
