@@ -6,15 +6,15 @@
         <div class="space-y-2 mb-4 md:mb-6">
             <div class="flex justify-between text-sm md:text-base">
                 <span>Subtotal:</span>
-                <span>${{ invoice?.subtotal }}</span>
+                <span>{{ invoice?.subtotal | currency:'USD' }}</span>
             </div>
             <div class="flex justify-between text-sm md:text-base">
                 <span>Tax ({{ invoice?.tax_rate || 0 }}%):</span>
-                <span>${{ invoice?.tax_amount }}</span>
+                <span>{{ invoice?.tax_amount | currency:'USD' }}</span>
             </div>
             <div class="flex justify-between text-sm md:text-base">
                 <span>Total Due:</span>
-                <span>${{ invoice?.total }}</span>
+                <span>{{ invoice?.total | currency:'USD' }}</span>
             </div>
         </div>
         <div class="mb-4 md:mb-6">
@@ -23,11 +23,11 @@
             </div>
             <div *ngIf="overdue" class="flex text-red-700 justify-between text-sm">
                 <span>Late Fee:</span>
-                <span class="font-semibold">${{ targetInstallment?.late_fee }}</span>
+                <span class="font-semibold">{{ targetInstallment?.late_fee | currency:'USD' }}</span>
             </div>
             <div *ngIf="!paid && !scheduled && !canceled" class="flex justify-between text-base">
                 <span>Due Today:</span>
-                <span class="font-semibold">${{ targetInstallment?.amount }}</span>
+                <span class="font-semibold">{{ targetInstallment?.amount | currency:'USD' }}</span>
             </div>
         </div>
     
@@ -41,7 +41,7 @@
                             'text-gray-800': installment.status !== 'paid'
                         }"
                     >
-                        • {{ installment.description }} – <span class="font-semibold">${{ installment.amount }}</span> due by {{ installment.due_date | date:'mediumDate' }}
+                        • {{ installment.description }} – <span class="font-semibold">{{ installment.amount | currency:'USD' }}</span> due by {{ installment.due_date | date:'mediumDate' }}
                     </span>
                     <svg
                         *ngIf="installment.status === 'paid'"
