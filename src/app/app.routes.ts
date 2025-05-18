@@ -29,6 +29,8 @@ import { PaymentsComponent } from './components/view/payments/payments.component
 import { PaymentSuccessComponent } from './components/view/payment-success/payment-success.component';
 import { PaymentCancelComponent } from './components/view/payment-cancel/payment-cancel.component';
 import { ManagePaymentsComponent } from './components/private/manage-payments/manage-payments.component';
+import { ClientsComponent } from './components/private/clients/clients.component';
+import { CoordinatorsComponent } from './components/private/coordinators/coordinators.component';
 
 export const routes: Routes = [
     {
@@ -70,6 +72,8 @@ export const routes: Routes = [
             { path: 'settings', component: ManageSettingsComponent },
             { path: 'events', component: EventsComponent },
             { path: 'payments', component: ManagePaymentsComponent },
+            { path: 'clients', component: ClientsComponent },
+            { path: 'coordinators', component: CoordinatorsComponent },
         ]
     },
     {
