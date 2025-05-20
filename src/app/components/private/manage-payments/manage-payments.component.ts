@@ -176,13 +176,33 @@ export class ManagePaymentsComponent implements OnInit {
       return;
     }
 
-    const invoiceId = this.targetInvoice.invoice_id;
-
     try {
       this.loading = true;
 
+      const invoiceId = this.targetInvoice.invoice_id;
+      const existingIds = this.lineItems.map(i => i.line_item_id);
+      const currentIds = this.editableLineItems
+        .filter(i => !!i.line_item_id)
+        .map(i => i.line_item_id);
+
+      const deletedIds = existingIds.filter(id => !currentIds.includes(id));
+
+      if (deletedIds.length > 0) {
+        const { error: deleteError } = await this.supabase.getClient()
+          .from('installments')
+          .delete()
+          .in('installment_id', deletedIds);
+
+        if (deleteError) {
+          this.toast.showToast('Failed to delete removed line items', 'error');
+          console.error('Error deleting line items: ', deleteError);
+          this.loading = false;
+          return;
+        }
+      }
+
       const newItems = this.editableLineItems.map(item => ({
-        line_item_id: item.line_item_id,
+        line_item_id: item.line_item_id || uuidv4(),
         invoice_id: invoiceId,
         description: item.description,
         quantity: item.quantity,
