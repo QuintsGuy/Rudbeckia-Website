@@ -30,6 +30,7 @@ import { ManagePaymentsComponent } from './components/private/manage-payments/ma
 import { ClientsComponent } from './components/private/clients/clients.component';
 import { CoordinatorsComponent } from './components/private/coordinators/coordinators.component';
 import { InquiriesComponent } from './components/public/inquiries/inquiries.component';
+import { SuccessComponent } from './components/public/inquiries/success/success.component';
 
 export const routes: Routes = [
     {
@@ -44,6 +45,7 @@ export const routes: Routes = [
             { path: 'inquiries', component: InquiriesComponent },
             { path: 'password-recovery', component: PasswordRecoveryComponent},
             { path: 'terms-and-conditions', component: TermsAndConditionsComponent},
+            { path: 'inquiries/success', component: SuccessComponent},
         ]
     },
     {
