@@ -17,7 +17,6 @@ import { CalendarComponent } from './components/private/calendar/calendar.compon
 import { ProposalComponent } from './components/view/proposals/proposal.component';
 import { ManageAboutComponent } from './components/private/manage-about/manage-about.component';
 import { ManageServicesComponent } from './components/private/manage-services/manage-services.component';
-import { InboxComponent } from './components/private/inbox/inbox.component';
 import { ManageSettingsComponent } from './components/private/manage-settings/manage-settings.component';
 import { EventsComponent } from './components/private/events/events.component';
 import { PasscodeComponent } from './components/auth/passcode/passcode.component';
@@ -69,7 +68,6 @@ export const routes: Routes = [
             { path: 'reviews', component: ManageReviewsComponent },
             { path: 'services', component: ManageServicesComponent },
             { path: 'users', component: UserManagementComponent },
-            { path: 'inbox', component: InboxComponent },
             { path: 'settings', component: ManageSettingsComponent },
             { path: 'events', component: EventsComponent },
             { path: 'payments', component: ManagePaymentsComponent },
