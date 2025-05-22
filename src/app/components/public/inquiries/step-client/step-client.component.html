@@ -1,0 +1,100 @@
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm md:text-md text-gray-700">
+    <!-- First Name -->
+    <div>
+        <label class="block text-white font-medium text-base mb-1">First Name</label>
+        <input
+            class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400"
+            placeholder="Enter first name"
+            [(ngModel)]="data.first_name"
+        />
+    </div>
+
+    <!-- Last Name -->
+    <div>
+        <label class="block text-white font-medium text-base mb-1">Last Name</label>
+        <input
+            class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400"
+            placeholder="Enter last name"
+            [(ngModel)]="data.last_name"
+        />
+    </div>
+
+    <!-- Email -->
+    <div class="md:col-span-2">
+        <label class="block text-white font-medium text-base mb-1">Email</label>
+        <input
+            type="email"
+            class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400"
+            placeholder="you@example.com"
+            [(ngModel)]="data.email"
+        />
+    </div>
+
+    <!-- Phone -->
+    <div class="md:col-span-2">
+        <label class="block text-white font-medium text-base mb-1">Phone</label>
+        <input
+            type="tel"
+            class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400"
+            placeholder="(123) 456-7890"
+            [(ngModel)]="data.phone"
+        />
+    </div>
+
+    <!-- Address -->
+    <div class="md:col-span-2">
+        <label class="block text-white font-medium text-base mb-1">Address</label>
+        <input
+            class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400"
+            placeholder="123 Main Street"
+            [(ngModel)]="data.address"
+        />
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">
+        <!-- City -->
+        <div>
+            <label class="block text-white font-medium text-base mb-1">City</label>
+            <input
+                class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400"
+                placeholder="City"
+                [(ngModel)]="data.city"
+            />
+        </div>
+
+        <!-- State  -->
+        <div>
+            <label class="block text-white font-medium text-base mb-1">State</label>
+            <select
+                class="w-full px-4 pt-[6px] border h-[37.6px] border-gray-300 rounded-md text-gray-700"
+                [(ngModel)]="data.state"
+            >
+            <option disabled value="">Select state</option>
+            <option *ngFor="let state of states" [value]="state">{{ state }}</option>
+            </select>
+        </div>
+
+        <!-- Zipcode -->
+        <div>
+            <label class="block text-white font-medium text-base mb-1">Zipcode</label>
+            <input
+                class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400"
+                placeholder="Zip"
+                [(ngModel)]="data.zipcode"
+            />
+        </div>
+    </div>
+
+    <!-- Preferred Contact -->
+    <div class="md:col-span-2">
+        <label class="block text-white font-medium text-base mb-1">Preferred Contact Method</label>
+        <select
+            class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-700"
+            [(ngModel)]="data.preferred_contact"
+        >
+        <option disabled value="">Select contact method</option>
+        <option>Email</option>
+        <option>Phone</option>
+        </select>
+    </div>
+</div>

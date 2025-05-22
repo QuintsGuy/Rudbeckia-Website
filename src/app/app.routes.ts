@@ -5,7 +5,6 @@ import { PortfolioComponent } from './components/public/portfolio/portfolio.comp
 import { AboutComponent } from './components/public/about/about.component';
 import { ServicesComponent } from './components/public/services/services.component';
 import { ReviewsComponent } from './components/public/reviews/reviews.component';
-import { ContactComponent } from './components/public/contact/contact.component';
 import { LoginComponent } from './components/auth/login/login.component';
 import { PrivateLayoutComponent } from './layouts/private-layout/private-layout.component';
 import { AdminAuthGuard } from './guards/admin-auth.guard';
@@ -21,7 +20,6 @@ import { ManageServicesComponent } from './components/private/manage-services/ma
 import { InboxComponent } from './components/private/inbox/inbox.component';
 import { ManageSettingsComponent } from './components/private/manage-settings/manage-settings.component';
 import { EventsComponent } from './components/private/events/events.component';
-import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { PasscodeComponent } from './components/auth/passcode/passcode.component';
 import { StripeComponent } from './components/view/stripe/stripe.component';
 import { TermsAndConditionsComponent } from './components/public/terms-and-conditions/terms-and-conditions.component';
@@ -31,6 +29,7 @@ import { PaymentCancelComponent } from './components/view/payment-cancel/payment
 import { ManagePaymentsComponent } from './components/private/manage-payments/manage-payments.component';
 import { ClientsComponent } from './components/private/clients/clients.component';
 import { CoordinatorsComponent } from './components/private/coordinators/coordinators.component';
+import { InquiriesComponent } from './components/public/inquiries/inquiries.component';
 
 export const routes: Routes = [
     {
@@ -42,7 +41,7 @@ export const routes: Routes = [
             { path: 'about', component: AboutComponent },
             { path: 'services', component: ServicesComponent },
             { path: 'reviews', component: ReviewsComponent },
-            { path: 'inquire', component: ContactComponent },
+            { path: 'inquiries', component: InquiriesComponent },
             { path: 'password-recovery', component: PasswordRecoveryComponent},
             { path: 'terms-and-conditions', component: TermsAndConditionsComponent},
         ]

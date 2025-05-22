@@ -1,0 +1,98 @@
+<!-- Disclaimer -->
+<div class="md:col-span-2 mb-4">
+    <p class="text-xs text-white italic">
+        **Venue details are optional. If you already have a venue, please fill out all event details below.
+    </p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm md:text-md text-gray-700">
+
+    <!-- Event Date -->
+    <div>
+        <label class="block text-white font-medium text-base mb-1">Event Date*</label>
+        <input
+            type="date"
+            class="w-full px-4 py-2 pt-[6px] border h-[37.6px] border-gray-300 rounded-md text-gray-700"
+            [(ngModel)]="data.date"
+        />
+    </div>
+
+    <!-- Event Type -->
+    <div>
+        <label class="block text-white font-medium text-base mb-1">Event Type*</label>
+        <select
+            class="w-full px-4 py-2 pt-[6px] border h-[37.6px] border-gray-300 rounded-md text-gray-700"
+            [(ngModel)]="data.type"
+        >
+            <option disabled value="">Select event type</option>
+            <option *ngFor="let type of eventTypes" [value]="type">{{ type | titlecase }}</option>
+        </select>
+    </div>
+
+    <!-- Venue -->
+    <div class="md:col-span-2">
+        <label class="block text-white font-medium text-base mb-1">Venue</label>
+        <input
+            class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400"
+            placeholder="Venue name"
+            [(ngModel)]="data.venue"
+        />
+    </div>
+
+    <!-- City / State / Zip -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">
+        <!-- City -->
+        <div>
+            <label class="block text-white font-medium text-base mb-1">City</label>
+            <input
+                class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400"
+                placeholder="City"
+                [(ngModel)]="data.city"
+            />
+        </div>
+
+        <!-- State -->
+        <div>
+            <label class="block text-white font-medium text-base mb-1">State</label>
+            <select
+                class="w-full px-4 pt-[6px] border h-[37.6px] border-gray-300 rounded-md text-gray-700"
+                [(ngModel)]="data.state"
+            >
+                <option disabled value="">Select state</option>
+                <option *ngFor="let state of states" [value]="state">{{ state }}</option>
+            </select>
+        </div>
+
+        <!-- Zipcode -->
+        <div>
+            <label class="block text-white font-medium text-base mb-1">Zipcode</label>
+            <input
+                class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400"
+                placeholder="Zip"
+                [(ngModel)]="data.zipcode"
+            />
+        </div>
+    </div>
+
+    <!-- Budget -->
+    <div class="md:col-span-2">
+        <label class="block text-white font-medium text-base mb-1">Floral Budget*</label>
+        <input
+            type="number"
+            class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400"
+            placeholder="Example: $3500"
+            [(ngModel)]="data.budget"
+        />
+    </div>
+
+    <!-- Message -->
+    <div class="md:col-span-2">
+        <label class="block text-white font-medium text-base mb-1">Tell Us About the Event*</label>
+        <textarea
+        class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 h-32 resize-none"
+        placeholder="Share any details you'd like us to know..."
+        [(ngModel)]="data.message"
+        ></textarea>
+    </div>
+</div>
+
