@@ -91,15 +91,25 @@ export class PaymentsComponent implements OnInit {
       const checkoutResponse: any = await this.createCheckoutSession(this.targetInstallment.installment_id);
       console.log('Response: ', checkoutResponse);
   
-      if (checkoutResponse?.url) {
+      if (checkoutResponse?.url && this.isTrustedUrl(checkoutResponse.url)) {
         window.location.href = checkoutResponse.url;
       } else {
-        console.error('Stripe did not return a url');
+        console.error('Stripe did not return a url or untrusted/missing URL from Stripe response');
         this.toast.showToast('Failed to get Stripe checkout URL', 'error');
       }
     } catch (err) {
       console.error("Failed to create checkout session: ", err);
       this.toast.showToast('Failed to create checkout session', 'error');
+    }
+  }
+
+  isTrustedUrl(url: string): boolean {
+    try {
+      const parsedUrl = new URL(url);
+      const allowedHosts = ['checkout.stripe.com']; // Add more domains if needed
+      return allowedHosts.includes(parsedUrl.hostname);
+    } catch (e) {
+      return false;
     }
   }
 
