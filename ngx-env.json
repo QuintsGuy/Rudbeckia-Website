@@ -1,4 +1,0 @@
-{
-    "NG_SUPABASE_URL": "process.env.NG_SUPABASE_URL",
-    "NG_SUPABASE_KEY": "process.env.NG_SUPABASE_KEY"
-}

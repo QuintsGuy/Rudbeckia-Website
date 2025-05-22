@@ -1,7 +1,7 @@
 // src/app/services/supabase.service.ts
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment';
 
 declare global {
   interface Window { supabase?: SupabaseClient }
@@ -16,8 +16,8 @@ export class SupabaseService {
   constructor() {
     if (!window.supabase) {
       window.supabase = createClient(
-        environment['SUPABASE_URL'] as string,
-        environment['SUPABASE_KEY'] as string,
+        environment['supabaseUrl'] as string,
+        environment['supabaseKey'] as string,
         { auth: { persistSession: true } }
       );
       console.log('SupabaseService Initialized');
