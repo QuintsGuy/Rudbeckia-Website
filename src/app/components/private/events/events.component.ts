@@ -20,7 +20,7 @@ export class EventsComponent implements OnInit {
   actionLoading: boolean = false;
   user: any;
 
-  filterStatus: string = 'All';
+  filterStatus: string = 'Active';
   searchTerm: string = '';
   currentPage: number = 1;
   pageSize: number = 10;
@@ -33,20 +33,71 @@ export class EventsComponent implements OnInit {
   });
 
   eventForm: FormGroup = new FormGroup({
-    name: new FormControl(''),
-    email: new FormControl(''),
-    phone: new FormControl(''),
-    event_type: new FormControl(''),
-    event_date: new FormControl(''),
+    date: new FormControl(''),
+    type: new FormControl(''),
     venue: new FormControl(''),
+    city: new FormControl(''),
+    state: new FormControl(''),
+    zipcode: new FormControl(''),
     budget: new FormControl(''),
-    coordinator: new FormControl(''),
-    coordinator_email: new FormControl(''),
-    pinterest_url: new FormControl(''),
     notes: new FormControl(''),
     status: new FormControl(''),
-    passcode: new FormControl(''),
+    isActive: new FormControl(''),
+    passcode: new FormControl('')
   });
+
+  states = [
+    { name: 'Alabama', abbreviation: 'AL' },
+    { name: 'Alaska', abbreviation: 'AK' },
+    { name: 'Arizona', abbreviation: 'AZ' },
+    { name: 'Arkansas', abbreviation: 'AR' },
+    { name: 'California', abbreviation: 'CA' },
+    { name: 'Colorado', abbreviation: 'CO' },
+    { name: 'Connecticut', abbreviation: 'CT' },
+    { name: 'Delaware', abbreviation: 'DE' },
+    { name: 'Florida', abbreviation: 'FL' },
+    { name: 'Georgia', abbreviation: 'GA' },
+    { name: 'Hawaii', abbreviation: 'HI' },
+    { name: 'Idaho', abbreviation: 'ID' },
+    { name: 'Illinois', abbreviation: 'IL' },
+    { name: 'Indiana', abbreviation: 'IN' },
+    { name: 'Iowa', abbreviation: 'IA' },
+    { name: 'Kansas', abbreviation: 'KS' },
+    { name: 'Kentucky', abbreviation: 'KY' },
+    { name: 'Louisiana', abbreviation: 'LA' },
+    { name: 'Maine', abbreviation: 'ME' },
+    { name: 'Maryland', abbreviation: 'MD' },
+    { name: 'Massachusetts', abbreviation: 'MA' },
+    { name: 'Michigan', abbreviation: 'MI' },
+    { name: 'Minnesota', abbreviation: 'MN' },
+    { name: 'Mississippi', abbreviation: 'MS' },
+    { name: 'Missouri', abbreviation: 'MO' },
+    { name: 'Montana', abbreviation: 'MT' },
+    { name: 'Nebraska', abbreviation: 'NE' },
+    { name: 'Nevada', abbreviation: 'NV' },
+    { name: 'New Hampshire', abbreviation: 'NH' },
+    { name: 'New Jersey', abbreviation: 'NJ' },
+    { name: 'New Mexico', abbreviation: 'NM' },
+    { name: 'New York', abbreviation: 'NY' },
+    { name: 'North Carolina', abbreviation: 'NC' },
+    { name: 'North Dakota', abbreviation: 'ND' },
+    { name: 'Ohio', abbreviation: 'OH' },
+    { name: 'Oklahoma', abbreviation: 'OK' },
+    { name: 'Oregon', abbreviation: 'OR' },
+    { name: 'Pennsylvania', abbreviation: 'PA' },
+    { name: 'Rhode Island', abbreviation: 'RI' },
+    { name: 'South Carolina', abbreviation: 'SC' },
+    { name: 'South Dakota', abbreviation: 'SD' },
+    { name: 'Tennessee', abbreviation: 'TN' },
+    { name: 'Texas', abbreviation: 'TX' },
+    { name: 'Utah', abbreviation: 'UT' },
+    { name: 'Vermont', abbreviation: 'VT' },
+    { name: 'Virginia', abbreviation: 'VA' },
+    { name: 'Washington', abbreviation: 'WA' },
+    { name: 'West Virginia', abbreviation: 'WV' },
+    { name: 'Wisconsin', abbreviation: 'WI' },
+    { name: 'Wyoming', abbreviation: 'WY' }
+  ];
 
   proposalFile: File | null = null;
   proposalUploadEnabled: boolean = false;
@@ -79,27 +130,42 @@ export class EventsComponent implements OnInit {
 
   async fetchEvents() {
     this.loading = true;
+    this.events = [];
   
     const from = (this.currentPage - 1) * this.pageSize;
     const to = from + this.pageSize - 1;
   
     let query = this.supabase.getClient()
       .from('events')
-      .select(`
-        event_id, event_date, event_type, venue, budget, pinterest_url, notes, status, todo,
-        client:clients (client_id, first_name, last_name, email, phone),
-        coordinator:coordinators (coordinator_id, name, email, phone),
+      .select(`*,
+        client:clients (*),
+        coordinator:coordinators (*),
+        urls:pinterest_urls (*),
         passcode:passcodes (passcode)
       `, { count: 'exact' })
       .range(from, to);
   
-    if (this.filterStatus !== 'All') {
-      query = query.eq('status', this.filterStatus);
+    switch (this.filterStatus) {
+      case 'Active':
+        query = query.eq('isActive', true);
+        break;
+      case 'New Inquiries':
+        query = query.eq('isActive', false).eq('status', 'pending');
+        break;
+      case 'Declined':
+        query = query.eq('isActive', false).in('status', ['declined', 'cancelled']);
+        break;
+      case 'Complete':
+        query = query.eq('isActive', false).eq('status', 'complete');
+        break;
+      default:
+        // Optionally fetch all or show nothing
+        break;
     }
   
     if (this.searchTerm.trim()) {
       query = query.or(
-        `name.ilike.%${this.searchTerm}%,event_type.ilike.%${this.searchTerm}%,venue.ilike.%${this.searchTerm}%,coordinator.ilike.%${this.searchTerm}%`
+        `name.ilike.%${this.searchTerm}%,type.ilike.%${this.searchTerm}%,venue.ilike.%${this.searchTerm}%,coordinator.ilike.%${this.searchTerm}%`
       );
     }
   
@@ -135,15 +201,74 @@ export class EventsComponent implements OnInit {
     }
   }
 
+  getActionLabel(status: string | null): string | null {
+    switch (status?.toLowerCase()) {
+      case 'pending':
+        return 'Accept / Decline';
+      case 'accepted':
+        return 'Draft Proposal';
+      case 'client review':
+      case 'declined':
+      case 'complete':
+      case 'cancelled':
+        return null;
+      case 'proposal accepted':
+        return 'Execute Order Details';
+      case 'proposal declined':
+        return 'Resubmit Proposal';
+      case 'refund requested':
+        return 'Refund Payments';
+      default:
+        return null;
+    }
+  }
+
+  async handleAccept(event: any) {
+    this.actionLoading = true;
+
+    const { error } = await this.supabase.getClient()
+      .from('events')
+      .update({ status: 'accepted', isActive: true })
+      .eq('event_id', event.event_id);
+
+    if (error) {
+      console.error('Failed to accept event:', error.message);
+      this.toast.showToast('Failed to accept event.', 'error');
+    } else {
+      this.toast.showToast('Event accepted!', 'success');
+      await this.fetchEvents();
+    }
+
+    this.actionLoading = false;
+  }
+
+  async handleDecline(event: any) {
+    this.actionLoading = true;
+
+    const { error } = await this.supabase.getClient()
+      .from('events')
+      .update({ status: 'declined', isActive: false })
+      .eq('event_id', event.event_id);
+
+    if (error) {
+      console.error('Failed to decline event:', error.message);
+      this.toast.showToast('Failed to decline event.', 'error');
+    } else {
+      this.toast.showToast('Event declined.', 'success');
+      await this.fetchEvents();
+    }
+
+    this.actionLoading = false;
+  }
+
   async openEventModal(event: any) {
     this.selectedEvent = event;
 
     const { error } = await this.supabase.getClient()
       .from('events')
-      .select(`
-        event_id, event_date, event_type, venue, budget, pinterest_url, notes, status, todo,
-        client:clients (client_id, first_name, last_name, email, phone),
-        coordinator:coordinators (coordinator_id, name, email, phone),
+      .select(`*,
+        client:clients (*),
+        coordinator:coordinators (*),
         passcode:passcodes (passcode)
       `, { count: 'exact' })
       .eq('event_id', event.event_id);
@@ -151,6 +276,23 @@ export class EventsComponent implements OnInit {
     if (error) {
       console.error('Could not open event modal:', error.message);
       this.toast.showToast('Could not open event modal.', 'error');
+    }
+
+    const { data: files, error: storageError } = await this.supabase.getClient().storage
+      .from('pinterest-inspo')
+      .list(`${event.event_id}`);
+
+    if (storageError) {
+      console.error('Error fetching inspiration images:', storageError.message);
+      this.toast.showToast('Could not load inspiration images.', 'error');
+      event.inspirationImages = [];
+    } else {
+      event.inspirationImages = files.map(file =>
+        this.supabase.getClient()
+          .storage
+          .from('pinterest-inspo')
+          .getPublicUrl(`${event.event_id}/${file.name}`).data.publicUrl
+      );
     }
     
     const modal = document.getElementById('viewEventModal');
@@ -185,15 +327,13 @@ export class EventsComponent implements OnInit {
     this.selectedEvent = event;
     this.eventForm.patchValue({
       name: `${event.client.first_name} ${event.client.last_name}`,
-      email: event.client.email,
-      phone: event.client.phone,
-      event_type: event.event_type,
-      event_date: event.event_date,
+      type: event.type,
+      date: event.date,
       venue: event.venue,
+      city: event.city,
+      state: event.state,
+      zipcode: event.zipcode,
       budget: event.budget,
-      coordinator: event.coordinator?.name,
-      coordinator_email: event.coordinator?.email,
-      pinterest_url: event.pinterest_url,
       notes: event.notes,
       status: event.status,
       passcode: event.passcode?.passcode,
@@ -215,44 +355,17 @@ export class EventsComponent implements OnInit {
 
   async saveEventChanges() {
     this.actionLoading = true;
-  
-    const { error: clientError } = await this.supabase.getClient()
-      .from('clients')
-      .update([{
-        email: this.eventForm.value.email,
-        phone: this.eventForm.value.phone,
-      }])
-      .eq('client_id', this.selectedEvent.client.client_id);
-
-    if (clientError) {
-      console.error('Failed to update client:', clientError.message);
-      this.toast.showToast('Failed to update client.', 'error');
-      return;
-    }
-
-    const { error: coordinatorError } = await this.supabase.getClient()
-      .from('coordinators')
-      .update([{
-        name: this.eventForm.value.coordinator,
-        email: this.eventForm.value.coordinator_email,
-        phone: this.eventForm.value.coordinator_phone
-      }])
-      .eq('coordinator_id', this.selectedEvent.coordinator.coordinator_id);
-
-    if (coordinatorError) {
-      console.error('Failed to update coordinator:', coordinatorError.message);
-      this.toast.showToast('Failed to update coordinator.', 'error');
-      return;
-    }
 
     const { error: eventError } = await this.supabase.getClient()
       .from('events')
       .update([{
-        event_date: this.eventForm.value.event_date,
-        event_type: this.eventForm.value.event_type,
+        date: this.eventForm.value.date,
+        type: this.eventForm.value.type,
         venue: this.eventForm.value.venue,
+        city: this.eventForm.value.city,
+        state: this.eventForm.value.state,
+        zipcode: this.eventForm.value.zipcode,
         budget: this.eventForm.value.budget,
-        pinterest_url: this.eventForm.value.pinterest_url,
         notes: this.eventForm.value.notes,
         status: this.eventForm.value.status
       }])
@@ -302,7 +415,6 @@ export class EventsComponent implements OnInit {
     }
 
     if (!proposal) {
-      console.log("No active proposal found.");
       this.selectedEvent.proposal = null;
     }
 
@@ -415,7 +527,7 @@ export class EventsComponent implements OnInit {
       .upload(filePath, this.proposalFile, { upsert: true });
 
     if (uploadError) {
-      console.log('Uploading proposal failed.', 'error');
+      console.error('Uploading proposal failed.', 'error');
       this.toast.showToast('Uploading proposal failed.');
       this.actionLoading = false;
       return;
@@ -427,7 +539,7 @@ export class EventsComponent implements OnInit {
       .eq('event_id', this.selectedEvent.event_id);
 
     if (updateEventError) {
-      console.log('Updating event status failed.', updateEventError);
+      console.error('Updating event status failed.', updateEventError);
       this.toast.showToast('Updating event status failed.');
       this.actionLoading = false;
       return;

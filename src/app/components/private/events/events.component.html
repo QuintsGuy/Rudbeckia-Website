@@ -13,7 +13,7 @@
                 </div>
                 <div class="flex flex-col-reverse md:flex-row items-center justify-between md:space-x-4 py-3">
                     <div class="w-full lg:w-2/3 flex flex-col space-y-3 md:space-y-0 md:flex-row md:items-center">
-                        <form [formGroup]="searchForm" class="w-full md:max-w-sm flex-1 md:mr-4 font-body">
+                        <form [formGroup]="searchForm" class="w-full md:max-w-sm flex-1 md:mr-4 font-lora">
                             <label for="default-search" class="text-sm font-medium text-gray-900 sr-only">Search</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -31,81 +31,30 @@
                     </div>
                 </div>
             </div>
-            <div class="mx-4 pb-3 flex flex-wrap font-body">
-                <div class="hidden md:flex items-center text-sm font-medium text-white mr-4 mt-3">Show only:</div>
-                <div class="flex flex-wrap">
-                    <div class="flex items-center mt-3 mr-4">
-                        <input 
-                            id="all" type="radio" name="show-only" 
-                            class="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-1"
-                            (change)="onFilterChange('All')"
-                            [checked]="filterStatus === 'All'"
-                        >
-                        <label for="all" class="ml-2 text-sm text-white font-medium">All</label>
-                    </div>
-                    <div class="flex items-center mr-4 mt-3">
-                        <input 
-                            id="Approved" type="radio" name="show-only" 
-                            class="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-1"
-                            (change)="onFilterChange('Approved')"
-                            [checked]="filterStatus === 'Approved'"
-                        >
-                        <label for="new" class="ml-2 text-sm text-white font-medium">Approved</label>
-                    </div>
-                    <div class="flex items-center mr-4 mt-3">
-                        <input 
-                            id="review" type="radio" name="show-only" 
-                            class="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-1"
-                            (change)="onFilterChange('Client Review')"
-                            [checked]="filterStatus === 'Client Review'"
-                        >
-                        <label for="in-progress" class="ml-2 text-sm text-white font-medium">Client Review</label>
-                    </div>
-                    <div class="flex items-center mr-4 mt-3">
-                        <input 
-                            id="proposal-declined" type="radio" name="show-only" 
-                            class="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-1"
-                            (change)="onFilterChange('Proposal Declined')"
-                            [checked]="filterStatus === 'Proposal Declined'"
-                        >
-                        <label for="in-progress" class="ml-2 text-sm text-white font-medium">Proposal Declined</label>
-                    </div>
-                    <div class="flex items-center mr-4 mt-3">
-                        <input 
-                            id="scheduled" type="radio" name="show-only" 
-                            class="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-1"
-                            (change)="onFilterChange('Scheduled')"
-                            [checked]="filterStatus === 'Scheduled'"
-                        >
-                        <label for="past" class="ml-2 text-sm font-medium text-white">Scheduled</label>
-                    </div>
-                    <div class="flex items-center mr-4 mt-3">
-                        <input 
-                            id="complete" type="radio" name="show-only" 
-                            class="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-1"
-                            (change)="onFilterChange('Complete')"
-                            [checked]="filterStatus === 'Complete'"
-                        >
-                        <label for="past" class="ml-2 text-sm font-medium text-white">Complete</label>
-                    </div>
-                    <div class="flex items-center mr-4 mt-3">
-                        <input 
-                            id="cancelled" type="radio" name="show-only" 
-                            class="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-primary-500 focus:ring-1"
-                            (change)="onFilterChange('Cancelled')"
-                            [checked]="filterStatus === 'Cancelled'"
-                        >
-                        <label for="past" class="ml-2 text-sm font-medium text-white">Cancelled</label>
-                    </div>
+            <div class="mx-4 pb-3 flex flex-wrap font-lora">
+                <div class="hidden md:flex items-center text-sm font-semibold text-white mr-4 mt-3">Show only:</div>
+                <div class="flex flex-wrap gap-2 mt-3">
+                    <button
+                        *ngFor="let status of ['New Inquiries', 'Active', 'Declined', 'Complete']"
+                        (click)="onFilterChange(status)"
+                        [ngClass]="{
+                        'bg-white text-[#b66a53] font-semibold ring-2 ring-[#b66a53]': filterStatus === status,
+                        'bg-[#b66a53] text-white hover:bg-[#9a5845]': filterStatus !== status
+                        }"
+                        class="px-4 py-1.5 rounded-full text-sm transition-all duration-200"
+                    >
+                        {{ status }}
+                    </button>
                 </div>
             </div>
-            <div class="overflow-x-auto font-body text-white">
+            <div class="overflow-x-auto font-lora text-white">
                 <table class="w-full text-sm text-left">
                     <thead class="text-xs uppercase">
                         <tr>
-                            <th scope="col" class="px-4 py-3">Event Type</th>
+                            <th scope="col" class="px-4 py-3"></th>
+                            <th scope="col" class="px-4 py-3">Type</th>
                             <th scope="col" class="px-4 py-3">Client</th>
-                            <th scope="col" class="px-4 py-3">Event Date</th>
+                            <th scope="col" class="px-4 py-3">Date</th>
                             <th scope="col" class="px-4 py-3">Venue</th>
                             <th scope="col" class="px-4 py-3">Status</th>
                             <th scope="col" class="px-4 py-3">Action</th>
@@ -117,14 +66,15 @@
                             *ngFor="let event of events"
                             class="border-b bg-[rgb(255,255,255)] text-black hover:bg-gray-200"
                         >
+                            <td></td>
                             <td class="pl-4 px-4 py-3">
-                                {{ event.event_type | titlecase }}
+                                {{ event.type | titlecase }}
                             </td>
                             <td class="px-4 py-3">
                                 {{ event.client.first_name }} {{ event.client.last_name }}
                             </td>
                             <td class="px-4 py-3">
-                                {{ event.event_date | date: 'MMMM d, y' }}
+                                {{ event.date | date: 'MMMM d, y' }}
                             </td>
                             <td class="px-4 py-3">
                                 {{ event.venue }}
@@ -133,17 +83,29 @@
                                 {{ event.status | titlecase }}
                             </td>
                             <td class="px-4 py-3">
-                                {{ event.todo | titlecase }}
+                                {{ getActionLabel(event.status) }}
                             </td>
                             <td class="px-4 py-3 flex flex-col lg:flex-row gap-2">
                                 <button (click)="openEventModal(event)" class="px-3 py-2 text-xs text-white bg-blue-600 rounded hover:bg-blue-700">Details</button>
-                                <button (click)="openProposalModal(event)" class="px-3 py-2 text-xs text-white bg-green-600 rounded hover:bg-green-700">Proposal</button>
+                                
+                                <ng-container *ngIf="filterStatus === 'New Inquiries'">
+                                    <button [disabled]="actionLoading" (click)="handleAccept(event)" class="px-3 py-2 text-xs text-white bg-green-600 rounded hover:bg-green-700">
+                                        Accept
+                                    </button>
+                                    <button [disabled]="actionLoading" (click)="handleDecline(event)" class="px-3 py-2 text-xs text-white bg-red-600 rounded hover:bg-red-700">
+                                        Decline
+                                    </button>
+                                </ng-container>
+
+                                <ng-container *ngIf="filterStatus === 'Active'">
+                                    <button (click)="openProposalModal(event)" class="px-3 py-2 text-xs text-white bg-green-600 rounded hover:bg-green-700">Proposal</button>
+                                </ng-container>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <nav class="flex flex-col text-white font-body md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4" aria-label="Table navigation">
+            <nav class="flex flex-col text-white font-lora md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4" aria-label="Table navigation">
                 <span class="text-sm font-normal text-white">
                     Showing
                     <span class="font-semibold">
@@ -178,10 +140,10 @@
     <div 
         id="viewEventModal" 
         tabindex="-1" 
-        class="hidden fixed inset-0 z-50 overflow-y-auto transition-opacity duration-300 ease-in-out text-black font-body"
+        class="hidden fixed inset-0 z-50 bg-black bg-opacity-50 overflow-y-auto transition-opacity duration-300 ease-in-out text-black font-lora"
     >
         <div class="modal-wrapper opacity-0 scale-95 transition-all duration-300 ease-out flex items-center justify-center min-h-screen">
-            <div class="relative w-full max-w-2xl p-6 bg-white rounded-lg shadow-lg border-4 border-[rgb(195,145,110)]">
+            <div class="relative w-full m-3 md:m-0 md:max-w-[80%] p-3 md:p-6 bg-white rounded-lg shadow-lg border-4 border-[rgb(195,145,110)]">
                 <!-- Modal Header -->
                 <div class="flex justify-between items-start">
                     <div>
@@ -202,24 +164,94 @@
                 </div>
 
                 <!-- Modal Body -->
-                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 text-md text-gray-700">
-                    <p><strong class="text-[rgb(195,145,110)]">Status:</strong> {{ selectedEvent?.status | titlecase }}</p>
-                    <p><strong class="text-[rgb(195,145,110)]">Passcode:</strong> {{ selectedEvent?.passcode.passcode }}</p>
-                    <p><strong class="text-[rgb(195,145,110)]">Client Email:</strong> {{ selectedEvent?.client.email }}</p>
-                    <p><strong class="text-[rgb(195,145,110)]">Phone:</strong> {{ selectedEvent?.client.phone }}</p>
-                    <p><strong class="text-[rgb(195,145,110)]">Event Type:</strong> {{ selectedEvent?.event_type | titlecase }}</p>
-                    <p><strong class="text-[rgb(195,145,110)]">Event Date:</strong> {{ selectedEvent?.event_date }}</p>
-                    <p><strong class="text-[rgb(195,145,110)]">Venue:</strong> {{ selectedEvent?.venue }}</p>
-                    <p><strong class="text-[rgb(195,145,110)]">Budget: </strong> ${{ selectedEvent?.budget }}</p>
-                    <p><strong class="text-[rgb(195,145,110)]">Coordinator:</strong> {{ selectedEvent?.coordinator.name }}</p>
-                    <p><strong class="text-[rgb(195,145,110)]">Coordinator Phone:</strong> {{ selectedEvent?.coordinator.phone }}</p>
-                    <p class="md:col-span-2 text-md"><strong class="text-[rgb(195,145,110)]">Coordinator Email:</strong> {{ selectedEvent?.coordinator.email }}</p>
-                    <p class="md:col-span-2"><strong class="text-[rgb(195,145,110)]">Pinterest URL:</strong> {{ selectedEvent?.pinterest_url }}</p>
-                    <p class="md:col-span-2"><strong class="text-[rgb(195,145,110)]">Notes:</strong> {{ selectedEvent?.notes }}</p>
+                <div class="mt-3 grid grid-cols-1 lg:grid-cols-4 gap-5 text-md text-gray-800 font-lora">
+                    <!-- Left Column -->
+                    <div class="space-y-4 lg:col-span-2">
+                        <!-- Group: Client Details -->
+                        <div class="bg-[#fdf6f2] border border-[#e6d3c4] rounded-lg p-4 shadow-sm">
+                            <h4 class="text-lg font-semibold text-[#b66a53] mb-2">Client Details</h4>
+                            <div class="grid grid-cols-2 md:grid-cols-2 gap-x-6 gap-y-2">
+                                <p><strong class="text-[#b66a53]">First Name:</strong> {{ selectedEvent?.client.first_name }}</p>
+                                <p><strong class="text-[#b66a53]">Last Name:</strong> {{ selectedEvent?.client.last_name }}</p>
+                                <p><strong class="text-[#b66a53]">Email:</strong> {{ selectedEvent?.client.email }}</p>
+                                <p><strong class="text-[#b66a53]">Phone:</strong> {{ selectedEvent?.client.phone }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Group: Event Details -->
+                        <div class="bg-[#fdf6f2] border border-[#e6d3c4] rounded-lg p-4 shadow-sm">
+                            <h4 class="text-lg font-semibold text-[#b66a53] mb-2">Event Information</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+                                <p><strong class="text-[#b66a53]">Status:</strong> {{ selectedEvent?.status | titlecase }}</p>
+                                <p><strong class="text-[#b66a53]">Passcode:</strong> {{ selectedEvent?.passcode.passcode }}</p>
+                                <p><strong class="text-[#b66a53]">Type:</strong> {{ selectedEvent?.type | titlecase }}</p>
+                                <p><strong class="text-[#b66a53]">Date:</strong> {{ selectedEvent?.date | date: 'MMMM d, y' }}</p>
+                                <p><strong class="text-[#b66a53]">Venue:</strong> {{ selectedEvent?.venue }}</p>
+                                <p><strong class="text-[#b66a53]">Budget:</strong> {{ selectedEvent?.budget | currency:'USD' }}</p>
+                                <p><strong class="text-[#b66a53]">City:</strong> {{ selectedEvent?.city }}</p>
+                                <p><strong class="text-[#b66a53]">State:</strong> {{ selectedEvent?.state }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Group: Coordinator -->
+                        <div class="bg-[#fdf6f2] border border-[#e6d3c4] rounded-lg p-4 shadow-sm">
+                            <h4 class="text-lg font-semibold text-[#b66a53] mb-2">Coordinator</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+                                <p><strong class="text-[#b66a53]">First Name:</strong> {{ selectedEvent?.coordinator.first_name }}</p>
+                                <p><strong class="text-[#b66a53]">Last Name:</strong> {{ selectedEvent?.coordinator.last_name }}</p>
+                                <p><strong class="text-[#b66a53]">Email:</strong> {{ selectedEvent?.coordinator.email }}</p>
+                                <p><strong class="text-[#b66a53]">Phone:</strong> {{ selectedEvent?.coordinator.phone }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="space-y-4 lg:col-span-2 lg:max-h-[545px] xl:max-h-[473px] overflow-y-auto pr-2">
+                        <!-- Group: Notes & Pinterest -->
+                        <div class="bg-[#fdf6f2] border border-[#e6d3c4] min-h-full rounded-lg p-4 shadow-sm">
+                            <h4 class="text-lg font-semibold text-[#b66a53] mb-2">Notes</h4>
+                            <p class="text-gray-700 whitespace-pre-line mb-4">{{ selectedEvent?.notes }}</p>
+
+                            <!-- Pinterest URLs -->
+                            <div *ngIf="selectedEvent?.urls?.length">
+                                <div class="list-disc list-inside space-y-1 text-blue-700">
+                                    <span *ngFor="let url of selectedEvent.urls">
+                                        <span class="inline-block overflow-x-auto max-w-full whitespace-nowrap">
+                                            <a 
+                                                [href]="url.url" 
+                                                target="_blank"
+                                                rel="noopener"
+                                                class="block max-w-full truncate hover:text-blue-900 hover:underline"
+                                            >{{ url.url }}</a>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Uploaded Images -->
+                            <div *ngIf="selectedEvent?.inspirationImages?.length" class="mt-4">
+                                <h5 class="text-[#b66a53] font-medium mb-2">Uploaded Inspiration Images</h5>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                                    <a
+                                        *ngFor="let img of selectedEvent.inspirationImages"
+                                        [href]="img"
+                                        target="_blank"
+                                        rel="noopener"
+                                    >
+                                    <img
+                                        [src]="img"
+                                        alt="Inspiration"
+                                        class="w-full h-32 object-cover rounded-md border hover:ring-2 hover:ring-[#b66a53] transition duration-200"
+                                    />
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Modal Footer -->
-                <div class="flex justify-end gap-2 mt-6">
+                <div class="flex justify-end gap-2 mt-3">
                     <button
                         [disabled]="actionLoading"
                         type="button"
@@ -232,18 +264,20 @@
                         </svg>
                         Modify Event
                     </button>
-                    <button
-                        [disabled]="actionLoading"
-                        type="button"
-                        class="px-5 py-2 text-sm text-white bg-green-600 rounded hover:bg-green-700 flex items-center"
-                        (click)="openProposalModal(selectedEvent)"
-                    >
-                        <svg *ngIf="actionLoading" class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-                        </svg>    
-                        Modify Proposal
-                    </button>
+                    <ng-container *ngIf="filterStatus === 'Active'">
+                        <button
+                            [disabled]="actionLoading"
+                            type="button"
+                            class="px-5 py-2 text-sm text-white bg-green-600 rounded hover:bg-green-700 flex items-center"
+                            (click)="openProposalModal(selectedEvent)"
+                        >
+                            <svg *ngIf="actionLoading" class="animate-spin h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                            </svg>    
+                            Modify Proposal
+                        </button>
+                    </ng-container>
                 </div>
             </div>
         </div>
@@ -253,7 +287,7 @@
     <div 
         id="modifyEventModal" 
         tabindex="-1" 
-        class="hidden fixed inset-0 z-50 overflow-y-auto transition-opacity duration-300 ease-in-out text-black font-body"
+        class="hidden fixed inset-0 z-50 bg-black bg-opacity-50 overflow-y-auto transition-opacity duration-300 ease-in-out text-black font-lora"
     >
         <div class="modal-wrapper opacity-0 scale-95 transition-all duration-300 ease-out flex items-center justify-center min-h-screen">
             <div class="relative w-full max-w-2xl p-6 bg-white rounded-lg shadow-lg border-4 border-[rgb(195,145,110)]">
@@ -279,17 +313,9 @@
                 <!-- Modal Body -->
                 <form [formGroup]="eventForm" class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 text-md text-gray-700">
                     <div>
-                        <label class="text-[rgb(195,145,110)] font-semibold">Client Email:</label>
-                        <input type="email" formControlName="email" class="w-full rounded border px-3 py-1" />
-                    </div>
-                    <div>
-                        <label class="text-[rgb(195,145,110)] font-semibold">Phone:</label>
-                        <input type="text" formControlName="phone" class="w-full rounded border px-3 py-1" />
-                    </div>
-                    <div>
-                        <label class="text-[rgb(195,145,110)] font-semibold">Event Type:</label>
-                        <select formControlName="event_type" class="w-full rounded border px-3 py-1">
-                            <option value="" disabled>-- Select Status --</option>
+                        <label class="text-[rgb(195,145,110)] font-semibold">Type:</label>
+                        <select formControlName="type" class="w-full rounded border px-3 py-1">
+                            <option value="" disabled>-- Select Type --</option>
                             <option value="wedding">Wedding</option>
                             <option value="bridal shower">Bridal Shower</option>
                             <option value="anniversary">Anniversary</option>
@@ -305,8 +331,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="text-[rgb(195,145,110)] font-semibold">Event Date:</label>
-                        <input type="date" formControlName="event_date" class="w-full rounded border px-3 py-1" />
+                        <label class="text-[rgb(195,145,110)] font-semibold">Date:</label>
+                        <input type="date" formControlName="date" class="w-full rounded border px-3 py-1" />
                     </div>
                     <div>
                         <label class="text-[rgb(195,145,110)] font-semibold">Venue:</label>
@@ -316,17 +342,24 @@
                         <label class="text-[rgb(195,145,110)] font-semibold">Budget:</label>
                         <input type="text" formControlName="budget" class="w-full rounded border px-3 py-1" />
                     </div>
-                    <div>
-                        <label class="text-[rgb(195,145,110)] font-semibold">Coordinator:</label>
-                        <input type="text" formControlName="coordinator" class="w-full rounded border px-3 py-1" />
-                    </div>
-                    <div>
-                        <label class="text-[rgb(195,145,110)] font-semibold">Coordinator Email:</label>
-                        <input type="email" formControlName="coordinator_email" class="w-full rounded border px-3 py-1" />
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="text-[rgb(195,145,110)] font-semibold">Pinterest URL:</label>
-                        <input type="url" formControlName="pinterest_url" class="w-full rounded border px-3 py-1 placeholder-gray-400" placeholder="https://" />
+                    <div class="md:col-span-2 space-x-3 flex justify-between">
+                        <div>
+                            <label class="text-[rgb(195,145,110)] font-semibold">City:</label>
+                            <input type="text" formControlName="city" class="w-full rounded border px-3 py-1" />
+                        </div>
+                        <div>
+                            <label class="text-[rgb(195,145,110)] font-semibold">State:</label>
+                            <select formControlName="state" class="w-full rounded border px-3 py-1">
+                                <option value="" disabled selected>-- Select State --</option>
+                                <option *ngFor="let state of states" [value]="state.abbreviation">
+                                    {{ state.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[rgb(195,145,110)] font-semibold">Zipcode:</label>
+                            <input type="text" formControlName="zipcode" class="w-full rounded border px-3 py-1" />
+                        </div>
                     </div>
                     <div class="md:col-span-2">
                         <label class="text-[rgb(195,145,110)] font-semibold">Customer Notes:</label>
@@ -336,7 +369,9 @@
                         <label class="text-[rgb(195,145,110)] font-semibold">Status:</label>
                         <select formControlName="status" class="w-full rounded border px-3 py-1">
                             <option value="">-- Select Status --</option>
-                            <option value="approved">Approved</option>
+                            <option value="pending">Pending</option>
+                            <option value="accepted">Accepted</option>
+                            <option value="declined">Declined</option>
                             <option value="client review">Client Review</option>
                             <option value="proposal declined">Proposal Declined</option>
                             <option value="scheduled">Scheduled</option>
@@ -373,7 +408,7 @@
     <div 
         id="proposalModal" 
         tabindex="-1" 
-        class="hidden fixed inset-0 z-50 overflow-y-auto transition-opacity duration-300 ease-in-out text-black font-body"
+        class="hidden fixed inset-0 z-50 bg-black bg-opacity-50 overflow-y-auto transition-opacity duration-300 ease-in-out text-black font-lora"
     >
         <div class="modal-wrapper opacity-0 scale-95 transition-all duration-300 ease-out flex items-center justify-center min-h-screen">
             <div class="relative w-full max-w-2xl p-6 bg-white rounded-lg shadow-lg border-4 border-[rgb(195,145,110)]">

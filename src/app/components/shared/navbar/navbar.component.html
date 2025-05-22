@@ -6,10 +6,8 @@
             </a>
             <div class="flex col-span-2 font-nav text-lg justify-end items-center xl:order-3 xl:col-span-1">
                 <a *ngIf="!hideLoginButton" routerLink="auth/login" (click)="toggleMenu()" class="hover:bg-white/20 text-sm md:text-xl font-medium rounded-xl px-4 py-2 xl:py-2.5 mr-2 focus:outline-none transition duration-300">Login</a>
-                <button 
-                    data-collapse-toggle="mobile-menu-2" type="button" 
+                <button type="button" 
                     class="inline-flex items-center p-2 ml-1 text-sm rounded-xl xl:hidden hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-gray-200" 
-                    aria-controls="mobile-menu-2" 
                     aria-expanded="false"
                     (click)="toggleMenu()"
                 >
@@ -22,7 +20,6 @@
                 *ngIf="isMenuOpen"
                 [@menuSlideFade]
                 class="overflow-hidden w-full xl:hidden xl:w-auto xl:order-1 xl:col-span-1"
-                id="mobile-menu-2"
             >
                 <ul class="flex flex-col font-nav text-md md:text-lg font-medium xl:flex-row xl:space-x-2 xl:mt-0">
                     <li @menuItem>
@@ -38,7 +35,7 @@
                         <a routerLink="/services" (click)="collapseMenu()" class="block py-2 pr-4 pl-3 hover:bg-white/20 rounded-lg xl:p-2 transition duration-300">Services</a>
                     </li>
                     <li @menuItem>
-                        <a routerLink="/inquire" (click)="collapseMenu()" class="block py-2 pr-4 pl-3 hover:bg-white/20 rounded-lg xl:p-2 transition duration-300">Contact</a>
+                        <a routerLink="/inquiries" (click)="collapseMenu()" class="block py-2 pr-4 pl-3 hover:bg-white/20 rounded-lg xl:p-2 transition duration-300">Contact</a>
                     </li>
                 </ul>
             </div>
@@ -57,7 +54,7 @@
                     <a routerLink="/services" class="px-2 py-2 hover:bg-white/20 rounded-lg transition duration-300">Services</a>
                 </li>
                 <li>
-                    <a routerLink="/inquire" class="px-2 py-2 hover:bg-white/20 rounded-lg transition duration-300">Contact</a>
+                    <a routerLink="/inquiries" class="px-2 py-2 hover:bg-white/20 rounded-lg transition duration-300">Contact</a>
                 </li>
             </ul>
         </div>
