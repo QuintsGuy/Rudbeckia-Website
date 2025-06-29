@@ -30,6 +30,7 @@ import { ClientsComponent } from './components/private/clients/clients.component
 import { CoordinatorsComponent } from './components/private/coordinators/coordinators.component';
 import { InquiriesComponent } from './components/public/inquiries/inquiries.component';
 import { SuccessComponent } from './components/public/inquiries/success/success.component';
+import { SubmitReviewComponent } from './components/view/submit-review/submit-review.component';
 
 export const routes: Routes = [
     {
@@ -84,6 +85,7 @@ export const routes: Routes = [
             { path: 'payment-success', component: PaymentSuccessComponent },
             { path: 'payment-cancel', component: PaymentCancelComponent },
             { path: 'stripe', component: StripeComponent },
+            { path: 'reviews', component: SubmitReviewComponent },
         ]
     }
 ];

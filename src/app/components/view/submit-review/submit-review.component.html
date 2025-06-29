@@ -1,0 +1,93 @@
+<section class="min-h-screen bg-gradient-to-b from-[#d49b79] to-[#f5e6dc] flex items-center justify-center px-4">
+    <div class="bg-white backdrop-blur-md mt-10 border border-white shadow-lg rounded-2xl w-full max-w-2xl p-6 md:p-10 font-body">
+
+        <!-- Header -->
+        <h1 class="text-4xl font-display font-bold text-center text-[#d49b79] mb-6">
+            We'd Love Your Feedback
+        </h1>
+
+        <!-- Loading -->
+        <div *ngIf="loading" class="text-center text-gray-600">
+            Loading review form...
+        </div>
+
+        <!-- Error -->
+        <div *ngIf="error" class="text-center text-red-600 font-medium">
+            {{ error }}
+        </div>
+
+        <!-- Already Submitted -->
+        <div *ngIf="submitted && !error" class="text-center text-green-700 text-lg">
+            <p class="mb-2">Thank you for your review! 🌿</p>
+            <p>Your feedback has been submitted.</p>
+        </div>
+
+        <!-- Review Form -->
+        <form *ngIf="!loading && !submitted && !error" [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="space-y-6">
+            <!-- Rating -->
+            <div>
+                <label class="block text-lg font-semibold text-gray-700 mb-2">Rating</label>
+                <div class="flex space-x-2 text-2xl">
+                    <ng-container *ngFor="let star of [1,2,3,4,5]">
+                        <button type="button"
+                            (click)="reviewForm.patchValue({ rating: star })"
+                            [class]="reviewForm.value.rating >= star ? 'text-[#d49b79]' : 'text-gray-400'"
+                            class="focus:outline-none transition-transform hover:scale-110"
+                        >
+                            ★
+                        </button>
+                    </ng-container>
+                </div>
+                <div *ngIf="reviewForm.controls['rating'].invalid && reviewForm.controls['rating'].touched"
+                    class="text-red-500 text-sm mt-1">Rating is required
+                </div>
+            </div>
+
+            <!-- Title -->
+            <div>
+                <label class="block text-lg font-semibold text-gray-700 mb-2">Title</label>
+                <input formControlName="title" type="text"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-black/20 focus:outline-none" />
+            </div>
+
+            <!-- Message -->
+            <div>
+                <label class="block text-lg font-semibold text-gray-700 mb-2">Your Review</label>
+                <textarea formControlName="message" rows="5"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-black/20 focus:outline-none"></textarea>
+                <div *ngIf="reviewForm.controls['message'].invalid && reviewForm.controls['message'].touched"
+                    class="text-red-500 text-sm mt-1">Message is required
+                </div>
+            </div>
+
+            <!-- Upload Photos -->
+            <div>
+                <label class="block text-lg font-semibold text-gray-700 mb-2">Add Photos (optional)</label>
+                <input type="file" multiple accept="image/png,image/jpeg,image/webp"
+                    (change)="onFileChange($event)"
+                    class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
+                            file:rounded-full file:border-0 file:text-sm file:font-semibold
+                            file:bg-[#d49b79]/90 file:text-white hover:file:bg-[#d49b79]"/>
+
+                <div class="mt-3 flex flex-wrap gap-2">
+                    <div *ngFor="let preview of imagePreviews; let i = index" class="relative group">
+                    <img [src]="preview" alt="Preview"
+                        class="w-40 h-40 object-cover rounded-lg border border-gray-300" />
+                    <button type="button"
+                            (click)="removeImage(i)"
+                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 text-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        ×
+                    </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit"
+                    class="w-full mt-4 bg-[#d49b79] text-white text-lg px-6 py-3 rounded-lg shadow-md hover:bg-[#e68953] transition duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
+                    [disabled]="reviewForm.invalid">
+                Submit Review
+            </button>
+        </form>
+    </div>
+</section>

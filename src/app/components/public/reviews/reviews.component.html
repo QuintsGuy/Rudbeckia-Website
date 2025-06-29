@@ -1,1 +1,66 @@
-<p>reviews works!</p>
+<section class="min-h-screen bg-gradient-to-b from-[#f5e6dc] to-[#d49b79] px-6 py-12 mt-10">
+    <div class="max-w-7xl mx-auto font-body">
+
+        <h2 class="text-center text-4xl font-display font-bold text-[#b66a53] mb-10">Past Client Reviews</h2>
+
+        <div *ngIf="loading" class="text-center text-gray-600">Loading reviews...</div>
+
+        <div *ngIf="!loading && reviews.length === 0" class="text-center text-gray-700">
+            No reviews available yet.
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
+            <div *ngFor="let review of reviews"
+                class="bg-white/90 shadow-md rounded-xl border border-[#ecd8cc] p-6 flex flex-col justify-between transition hover:shadow-xl">
+                
+                <!-- Rating -->
+                <div class="text-2xl mb-1">
+                    <ng-container *ngFor="let star of [1,2,3,4,5]">
+                        <span
+                        [ngClass]="{
+                            'text-[#d49b79]': review.rating >= star,
+                            'text-gray-300': review.rating < star
+                        }"
+                        >
+                            ★
+                        </span>
+                    </ng-container>
+                </div>
+
+                <!-- Title -->
+                <h3 class="font-semibold text-lg text-gray-800 mb-2">{{ review.title }}</h3>
+
+                <!-- Message -->
+                <p class="text-gray-700 text-sm mb-4 whitespace-pre-line">
+                    "{{ review.message }}"
+                </p>
+
+                <!-- Images -->
+                <div *ngIf="review.images.length > 0" class="flex flex-wrap gap-3">
+                    <img *ngFor="let img of review.images" [src]="img" (click)="openImageModal(img)"
+                        class="w-20 h-28 object-cover rounded-lg border border-gray-300 cursor-pointer hover:scale-105 transition" />
+                </div>
+
+                <!-- Client Name -->
+                <div *ngIf="review.event?.client?.first_name"
+                    class="text-sm text-gray-600 italic">
+                    — {{ review.event.client.first_name }} {{ review.event.client.last_name }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div *ngIf="selectedImageUrl" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center">
+        <div class="relative max-w-3xl w-full px-4">
+            <img [src]="selectedImageUrl" class="w-full max-h-[90vh] object-contain rounded-lg shadow-lg" alt="Full image" />
+            <button (click)="closeImageModal()"
+                    class="absolute top-2 right-6 h-10 w-10 text-white bg-black bg-opacity-60 hover:bg-opacity-90 rounded-full p-2">
+                ✕
+            </button>
+        </div>
+    </div>
+</section>
+
+
+
