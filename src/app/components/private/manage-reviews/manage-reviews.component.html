@@ -1,1 +1,221 @@
-<p>manage-reviews works!</p>
+<div class="min-h-screen bg-gradient-to-b from-[#f5e6dc] to-[#d49b79] px-6 py-10 font-serif">
+    <!-- Table wrapper -->
+    <section class="bg-[#d49b79] backdrop-blur-lg shadow-xl p-4 rounded-xl overflow-hidden">
+        <div class="flex justify-between items-center">
+            <h5 class="font-medium text-4xl text-white font-display">Reviews Manager</h5>
+            <div class="justify-end">
+                <a routerLink="/admin/payment-log"
+                    class="cursor-pointer inline-block bg-[#d49b79] border-2 font-lora hover:bg-[#ae7452] text-white px-5 py-2 rounded-md font-medium transition duration-300"
+                >
+                    View Change Logs
+                </a>
+            </div>
+        </div>
+
+        <div class="flex flex-col-reverse md:flex-row items-center justify-between md:space-x-4 py-3">
+            <div class="w-full lg:w-2/3 flex flex-col space-y-3 md:space-y-0 md:flex-row md:items-center">
+                <form class="w-full md:max-w-sm flex-1 md:mr-4 font-body">
+                    <label for="default-search" class="text-sm font-medium text-gray-900 sr-only">Search</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <svg aria-hidden="true" class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <input 
+                            type="search" name="search" id="default-search" 
+                            class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500" 
+                            placeholder="Search..."
+                        >
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="rounded-xl overflow-hidden shadow-md bg-white">
+            <table class="min-w-full font-lora text-left text-sm text-gray-700">
+                <thead class="bg-[#d49b79] text-white text-sm uppercase tracking-wider">
+                    <tr>
+                        <th class="px-6 py-3 cursor-pointer hover:underline" (click)="setSort('view_order')">
+                            <div class="flex justify-between items-center w-full">
+                                <span>View Order</span>
+                                <span class="ml-1">
+                                    <ng-container *ngIf="sortColumn === 'view_order'">
+                                        {{ sortDirection === 'asc' ? '▲' : '▼' }}
+                                    </ng-container>
+                                    <ng-container *ngIf="sortColumn !== 'view_order'">
+                                        ⇅
+                                    </ng-container>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="px-6 py-3">Client Name</th>
+                        <th class="px-6 py-3">Title</th>
+                        <th class="px-6 py-3 cursor-pointer hover:underline" (click)="setSort('rating')">
+                            <div class="flex justify-between items-center w-full">
+                                <span>Rating</span>
+                                <span class="ml-1">
+                                    <ng-container *ngIf="sortColumn === 'rating'">
+                                        {{ sortDirection === 'asc' ? '▲' : '▼' }}
+                                    </ng-container>
+                                    <ng-container *ngIf="sortColumn !== 'rating'">
+                                        ⇅
+                                    </ng-container>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="px-6 py-3">Event Date</th>
+                        <th class="px-6 py-3 cursor-pointer hover:underline" (click)="setSort('complete')">
+                            <div class="flex justify-between items-center w-full">
+                                <span>Completed</span>
+                                <span class="ml-1">
+                                    <ng-container *ngIf="sortColumn === 'complete'">
+                                        {{ sortDirection === 'asc' ? '▲' : '▼' }}
+                                    </ng-container>
+                                    <ng-container *ngIf="sortColumn !== 'complete'">
+                                        ⇅
+                                    </ng-container>
+                                </span>
+                            </div>
+                        </th>
+                        <th class="px-6 py-3 cursor-pointer hover:underline" (click)="setSort('is_shown')">
+                            <div class="flex justify-between items-center w-full">
+                                <span>Public View</span>
+                                <span class="ml-1">
+                                    <ng-container *ngIf="sortColumn === 'is_shown'">
+                                        {{ sortDirection === 'asc' ? '▲' : '▼' }}
+                                    </ng-container>
+                                    <ng-container *ngIf="sortColumn !== 'is_shown'">
+                                        ⇅
+                                    </ng-container>
+                                </span>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-[#fff9f5]">
+                    <ng-container *ngFor="let review of reviews">
+                        <!-- Row -->
+                        <tr class="hover:bg-[#f9f4f2] cursor-pointer" (click)="toggleModal(review)">
+                            <td class="px-6 py-4">{{ review.view_order }}</td>
+                            <td class="px-6 py-4 font-medium">{{ review.event.client.first_name | titlecase }} {{ review.event.client.last_name | titlecase }}</td>
+                            <td class="px-6 py-4">{{ review.title | titlecase }}</td>
+                            <td class="px-6 py-4 text-[#d49b79] text-base">
+                                <ng-container *ngFor="let star of [1,2,3,4,5]">
+                                    <span [ngClass]="{
+                                    'text-[#d49b79]': review.rating >= star,
+                                    'text-gray-300': review.rating < star
+                                    }">★</span>
+                                </ng-container>
+                            </td>
+                            <td class="px-6 py-4">{{ review.event.date | date: 'd MMMM y' }}</td>
+                            <td class="px-6 py-4">{{ review.complete ? 'Yes' : 'No' }}</td>
+                            <td class="px-6 py-4">{{ review.is_shown ? 'Yes' : 'No' }}</td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Modal Background -->
+    <div *ngIf="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+        <div class="bg-white rounded-xl p-6 w-full max-w-2xl relative shadow-lg border border-[#d49b79]">
+
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-3xl font-display text-[#d49b79]">Edit Review</h2>
+                <button (click)="showModal = false" class="text-gray-600 hover:text-black text-xl font-bold">
+                    ×
+                </button>
+            </div>
+
+            <!-- Review Form -->
+            <form [formGroup]="editReviewForm" (ngSubmit)="submitReviewUpdate()" class="space-y-4 font-body">
+
+                <!-- Rating -->
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-1">Rating</label>
+                    <div class="flex space-x-2 text-xl">
+                        <ng-container *ngFor="let star of [1,2,3,4,5]">
+                            <button
+                                type="button"
+                                (click)="editReviewForm.patchValue({ rating: star })"
+                                [ngClass]="{
+                                    'text-[#d49b79]': editReviewForm.value.rating >= star,
+                                    'text-gray-300': editReviewForm.value.rating < star
+                                }"
+                                class="focus:outline-none transition-transform hover:scale-110"
+                            >
+                                ★
+                            </button>
+                        </ng-container>
+                    </div>
+                </div>
+
+                <!-- Title -->
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-1">Title</label>
+                    <input type="text" formControlName="title"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-[#d49b79] focus:outline-none" />
+                </div>
+
+                <!-- Message -->
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-1">Message</label>
+                    <textarea formControlName="message" rows="4"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-[#d49b79] focus:outline-none"></textarea>
+                </div>
+
+                <!-- View Order + is_shown -->
+                <div class="flex space-x-4">
+                    <div class="flex-1">
+                        <label class="block font-semibold text-gray-700 mb-1">View Order</label>
+                        <input type="number" formControlName="view_order"
+                            class="w-full border border-gray-300 rounded-lg placeholder-slate-400 px-4 py-2 focus:ring-[#d49b79] focus:outline-none"
+                            placeholder="Empty" />
+                    </div>
+                    <div class="flex items-center mt-6 space-x-2">
+                        <input type="checkbox" formControlName="is_shown" id="is_shown"
+                            class="accent-[#d49b79] w-5 h-5 rounded border-gray-300" />
+                        <label for="is_shown" class="text-gray-700">Show Publicly</label>
+                    </div>
+                </div>
+
+                <!-- Images -->
+                <div *ngIf="reviewImages.length" class="pt-4">
+                    <label class="block font-semibold text-gray-700 mb-2">Attached Images</label>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div *ngFor="let img of reviewImages"
+                            (click)="toggleImageVisibility(img.review_images_id, !img.is_shown)"
+                            class="relative group border-4 rounded-lg overflow-hidden cursor-pointer transition duration-200"
+                            [ngClass]="img.is_shown ? 'border-blue-500 shadow-md' : 'border-gray-400'">
+
+                            <!-- Image Preview -->
+                            <img [src]="img.image_url" alt="Review image" class="w-full h-32 object-cover" />
+
+                            <!-- Public Indicator Overlay -->
+                            <div *ngIf="img.is_shown"
+                                class="absolute top-1 right-1 pt-[3.5px] pl-[6px] bg-blue-500 w-5 h-5 text-white rounded-full text-xs shadow">
+                                ✓
+                            </div>
+
+                            <!-- Label Footer -->
+                            <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs px-2 py-1 text-center">
+                                Click to {{ img.is_shown ? 'Hide' : 'Show' }} Publicly
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="pt-4">
+                    <button type="submit"
+                        class="w-full bg-[#d49b79] hover:bg-[#b77a59] text-white px-6 py-3 rounded-lg font-semibold shadow transition">
+                    Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

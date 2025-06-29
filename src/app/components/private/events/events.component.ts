@@ -356,6 +356,9 @@ export class EventsComponent implements OnInit {
   async saveEventChanges() {
     this.actionLoading = true;
 
+    const originalStatus = this.selectedEvent.status;
+    const newStatus = this.eventForm.value.status;
+
     const { error: eventError } = await this.supabase.getClient()
       .from('events')
       .update([{
@@ -374,12 +377,62 @@ export class EventsComponent implements OnInit {
     if (eventError) {
       console.error('Failed to update event:', eventError.message);
       this.toast.showToast('Failed to update event.', 'error');
-    } else {
-      await this.fetchEvents();
-      this.closeModifyEventModal();
-      this.toast.showToast('Event modified successfully!', 'success');
+      this.actionLoading = false;
     }
-  
+
+    console.log("Original Status: ", originalStatus);
+    console.log("New Status: ", newStatus);
+    
+    if (originalStatus !== 'complete' && newStatus === 'complete') {
+      const { data: reviewData, error: reviewError } = await this.supabase.getClient()
+        .from('reviews')
+        .insert([{
+          event_id: this.selectedEvent.event_id,
+          complete: false,
+          isShown: false
+        }])
+        .select('token')
+        .single();
+
+      if (reviewError) {
+        console.error('Failed to create review:', reviewError.message);
+        this.toast.showToast('Review creation failed.', 'error');
+      } else {
+        const { data: clientData, error: clientError } = await this.supabase.getClient()
+          .from('clients')
+          .select('email, first_name')
+          .eq('client_id', this.selectedEvent.client.client_id)
+          .single();
+
+        if (clientError) {
+          console.error('Failed to fetch client email:', clientError.message);
+        } else {
+          const name = clientData.first_name;
+          const email = clientData.email;
+          const token = reviewData.token;
+          
+          try {
+            const response = await fetch('https://dzyjvjalyvezqqvknazd.supabase.co/functions/v1/send-review-email', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name, email, token })
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+              throw new Error(data.error || 'Email failed to send');
+            }
+          } catch (err) {
+            console.error(err);
+            this.toast.showToast('Failed to send review email', 'error');
+          }
+        }
+      }
+    }
+
+    await this.fetchEvents();
+    this.closeModifyEventModal();
+    this.toast.showToast('Event modified successfully!', 'success');
     this.actionLoading = false;
   }
 
