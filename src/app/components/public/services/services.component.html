@@ -1,1 +1,109 @@
-<p>services works!</p>
+<section class="min-h-screen bg-gradient-to-b from-[#f5e6dc] to-[#d49b79] px-6 py-12">
+    <div class="pt-10 px-6 max-w-5xl mx-auto font-serif">
+        <!-- Tab Navigation -->
+        <div class="flex justify-center space-x-6 border-b border-gray-300 pb-4">
+            <button
+                *ngFor="let tab of tabs"
+                (click)="selectTab(tab)"
+                class="text-lg transition duration-300"
+                [ngClass]="{
+                    'font-bold border-b-2 border-[#b66a53] text-[#b66a53]': selectedTab === tab,
+                    'text-gray-600 hover:text-[#b66a53]': selectedTab !== tab
+                }"
+            >
+                {{ tab }}
+            </button>
+        </div>
+
+        <!-- Tab Content -->
+        <div
+            class="mt-10 opacity-0 animate-fade-in transition-opacity duration-500"
+            [@fadeIn]>
+            <ng-container [ngSwitch]="selectedTab">
+                <!-- Weddings -->
+                <div *ngSwitchCase="'Weddings'">
+                    <h2 class="text-3xl text-[#b66a53] font-medium mb-4">Weddings</h2>
+                    <p class="mb-2">
+                        Your wedding day is a reflection of your unique love story — and we specialize in bringing that story to life with breathtaking floral designs.
+                    </p>
+                    <ul class="list-disc list-inside mb-4">
+                        <li>Custom bridal bouquets, boutonnieres, and corsages</li>
+                        <li>Elegant ceremony backdrops and floral arches</li>
+                        <li>Reception centerpieces and tablescapes</li>
+                        <li>Floral installations for venues, tents, and entrances</li>
+                        <li>On-site setup and floral coordination</li>
+                    </ul>
+                    <p>
+                        Whether you're envisioning a romantic garden wedding or a timeless formal affair, our design team will work closely with you to create floral elements that elevate your special day.
+                    </p>
+                </div>
+
+                <!-- Parties -->
+                <div *ngSwitchCase="'Parties'">
+                    <h2 class="text-3xl text-[#b66a53] font-medium mb-4">Parties</h2>
+                    <p class="mb-2">
+                        From milestone birthdays to intimate soirées, our floral designs add charm, sophistication, and celebration to any gathering.
+                    </p>
+                    <ul class="list-disc list-inside mb-4">
+                        <li>Customized themes and seasonal arrangements</li>
+                        <li>Vibrant table décor and floral runners</li>
+                        <li>Photo booth floral walls and backdrops</li>
+                        <li>Statement pieces for dessert tables and entrances</li>
+                    </ul>
+                    <p>
+                        We collaborate with you to tailor the aesthetic to your party's style, ensuring your event feels cohesive and memorable.
+                    </p>
+                </div>
+
+                <!-- Graduations -->
+                <div *ngSwitchCase="'Graduations'">
+                    <h2 class="text-3xl text-[#b66a53] font-medium mb-4">Graduations</h2>
+                    <p class="mb-2">
+                        Celebrate academic achievements with floral arrangements that honor hard work and new beginnings.
+                    </p>
+                    <ul class="list-disc list-inside mb-4">
+                        <li>Fresh flower leis and celebratory bouquets</li>
+                        <li>Stage floral design and podium décor</li>
+                        <li>Centerpieces for graduation parties and banquets</li>
+                    </ul>
+                    <p>
+                        Whether for a small family gathering or a large school ceremony, our florals add warmth and color to the occasion.
+                    </p>
+                </div>
+
+                <!-- Funerals -->
+                <div *ngSwitchCase="'Funerals'">
+                    <h2 class="text-3xl text-[#b66a53] font-medium mb-4">Funerals</h2>
+                    <p class="mb-2">
+                        We offer compassionate and respectful floral services to help you honor and remember your loved ones with grace.
+                    </p>
+                    <ul class="list-disc list-inside mb-4">
+                        <li>Sympathy arrangements and tribute designs</li>
+                        <li>Casket sprays, wreaths, and standing easels</li>
+                        <li>Custom remembrance pieces with personal touches</li>
+                    </ul>
+                    <p>
+                        Our team is here to support you through every detail, creating arrangements that convey love, memory, and peace.
+                    </p>
+                </div>
+
+                <!-- Other -->
+                <div *ngSwitchCase="'Other'">
+                    <h2 class="text-3xl text-[#b66a53] font-medium mb-4">Other Services</h2>
+                    <p class="mb-2">
+                        In addition to our core services, we offer custom floral solutions for a variety of unique occasions and needs.
+                    </p>
+                    <ul class="list-disc list-inside mb-4">
+                        <li>Corporate events and galas</li>
+                        <li>Holiday installations and seasonal décor</li>
+                        <li>Styled shoots and branding visuals</li>
+                        <li>Workshops and floral education sessions</li>
+                    </ul>
+                    <p>
+                        If you have a vision, I would love to bring it to life. Our versatile team thrives on creative challenges and one-of-a-kind projects.
+                    </p>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</section>
