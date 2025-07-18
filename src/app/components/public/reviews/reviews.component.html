@@ -1,7 +1,10 @@
-<section class="min-h-screen bg-gradient-to-b from-[#f5e6dc] to-[#d49b79] px-6 py-12 mt-10">
-    <div class="max-w-7xl mx-auto font-body">
+<section 
+    class="min-h-screen px-6 py-12 bg-no-repeat bg-cover bg-center bg-blend-multiply bg-gray-400"
+    style="background-image: url('assets/images/landing/IMG_0706.JPG');"
+>
+    <div class="max-w-7xl mx-auto font-body mt-[60px] bg-[#d49b79] bg-opacity-80 rounded-3xl p-8 shadow backdrop-blur-md">
 
-        <h2 class="text-center text-4xl font-display font-bold text-[#b66a53] mb-10">Past Client Reviews</h2>
+        <h2 class="text-center text-5xl font-display text-white mb-5">Client Reviews</h2>
 
         <div *ngIf="loading" class="text-center text-gray-600">Loading reviews...</div>
 
@@ -9,7 +12,7 @@
             No reviews available yet.
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 xl:gap-10">
             <div *ngFor="let review of reviews"
                 class="bg-white/90 shadow-md rounded-xl border border-[#ecd8cc] p-6 flex flex-col justify-between transition hover:shadow-xl">
                 
