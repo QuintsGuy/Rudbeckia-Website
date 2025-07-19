@@ -29,13 +29,28 @@ export class LoginComponent {
   }
 
   async onSubmit(): Promise<void> {
-    if (this.loginForm.invalid) return;
+    if (this.loginForm.invalid) {
+      console.warn('Login form is invalid');
+      return;
+    }
+
     const { email, password } = this.loginForm.value;
     this.loading = true;
-    
-    const error = await this.authService.login(email, password);
-    if (error) {
-      alert(error);
+    this.loginError = null;
+
+    try {
+      const error = await this.authService.login(email, password);
+
+      if (error) {
+        this.loginError = error;
+        console.warn('⚠️ Login failed:', error);
+        alert(error);
+      } else {
+        console.log('✅ Login successful');
+      }
+    } catch (err) {
+      this.loginError = 'An unexpected error occurred.';
+      console.error('🔥 Login error:', err);
     }
 
     this.loading = false;

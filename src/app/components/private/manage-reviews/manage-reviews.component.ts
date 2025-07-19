@@ -60,8 +60,6 @@ export class ManageReviewsComponent {
       .order('view_order', {ascending: true})
       .range(from, to);
     
-    console.log(reviewsData);
-    
     if (fetchError) {
       console.error('Failed to load reviews: ', fetchError.message);
       this.toast.showToast('Failed to load reviews', 'error');

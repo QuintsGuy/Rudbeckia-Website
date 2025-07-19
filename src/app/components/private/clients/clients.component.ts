@@ -56,8 +56,6 @@ export class ClientsComponent {
       .order('created_at', {ascending: false})
       .range(from, to);
     
-    console.log(clientsData);
-    
     if (fetchError) {
       console.error('Failed to load clients: ', fetchError.message);
       this.toast.showToast('Failed to load clients', 'error');

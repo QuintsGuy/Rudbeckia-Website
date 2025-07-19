@@ -55,8 +55,6 @@ export class CoordinatorsComponent {
       .order('created_at', {ascending: false})
       .range(from, to);
     
-    console.log(coordinatorsData);
-    
     if (fetchError) {
       console.error('Failed to load coordinators: ', fetchError.message);
       this.toast.showToast('Failed to load coordinators', 'error');
