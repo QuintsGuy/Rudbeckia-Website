@@ -31,7 +31,7 @@ export class AdminAuthGuard implements CanActivate, CanActivateChild {
 
     const [isLoggedIn, isAdmin] = await Promise.all([
       firstValueFrom(this.authService.isAuthenticated()),
-      this.authService.isAdmin()
+      firstValueFrom(this.authService.isAdmin()),
     ]);
 
     if (isLoggedIn && isAdmin) {

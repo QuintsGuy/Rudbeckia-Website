@@ -25,9 +25,8 @@ export class SupabaseService {
           } 
         }
       );
-      console.log('SupabaseService Initialized');
     } else {
-      console.log('Using cached Supabase instance');
+      console.warn('Using cached Supabase instance');
     }
 
     this.supabase = window.supabase!;
