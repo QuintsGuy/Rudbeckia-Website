@@ -1,13 +1,21 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-services',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ],
   templateUrl: './services.component.html',
-  styleUrl: './services.component.css'
+  styleUrl: './services.component.css',
+  animations: [
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('700ms ease-in', style({ opacity: 1 }))
+      ])
+    ])
+  ]
 })
 export class ServicesComponent {
   tabs = ['Weddings', 'Parties', 'Graduations', 'Funerals', 'Other'];
