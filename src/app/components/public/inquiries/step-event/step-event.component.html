@@ -5,28 +5,40 @@
     </p>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm md:text-md text-gray-700">
+<div [formGroup]="formGroup" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm md:text-md text-gray-700">
 
     <!-- Event Date -->
-    <div>
+    <div class="relative">
         <label class="block text-white font-medium text-base mb-1">Event Date*</label>
         <input
             type="date"
             class="w-full px-4 py-2 pt-[6px] border h-[37.6px] border-gray-300 rounded-md text-gray-700"
-            [(ngModel)]="data.date"
+            formControlName="date"
         />
+        <p 
+            *ngIf="getControl('date')?.invalid && getControl('date')?.touched" 
+            class="absolute right-0 mt-1 text-xs text-white bg-red-600 px-2 py-1 rounded shadow z-10"
+        >
+            Event date is required
+        </p>
     </div>
 
     <!-- Event Type -->
-    <div>
+    <div class="relative">
         <label class="block text-white font-medium text-base mb-1">Event Type*</label>
         <select
             class="w-full px-4 py-2 pt-[6px] border h-[37.6px] border-gray-300 rounded-md text-gray-700"
-            [(ngModel)]="data.type"
+            formControlName="type"
         >
             <option disabled value="">Select event type</option>
             <option *ngFor="let type of eventTypes" [value]="type">{{ type | titlecase }}</option>
         </select>
+        <p 
+            *ngIf="getControl('type')?.invalid && getControl('type')?.touched" 
+            class="absolute right-0 mt-1 text-xs text-white bg-red-600 px-2 py-1 rounded shadow z-10"
+        >
+            Event type is required
+        </p>
     </div>
 
     <!-- Venue -->
@@ -35,7 +47,7 @@
         <input
             class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400"
             placeholder="Venue name"
-            [(ngModel)]="data.venue"
+            formControlName="venue"
         />
     </div>
 
@@ -47,20 +59,26 @@
             <input
                 class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400"
                 placeholder="City"
-                [(ngModel)]="data.city"
+                formControlName="city"
             />
         </div>
 
         <!-- State -->
-        <div>
-            <label class="block text-white font-medium text-base mb-1">State</label>
+        <div class="relative">
+            <label class="block text-white font-medium text-base mb-1">State*</label>
             <select
                 class="w-full px-4 pt-[6px] border h-[37.6px] border-gray-300 rounded-md text-gray-700"
-                [(ngModel)]="data.state"
+                formControlName="state"
             >
                 <option disabled value="">Select state</option>
                 <option *ngFor="let state of states" [value]="state">{{ state }}</option>
             </select>
+            <p 
+                *ngIf="getControl('state')?.invalid && getControl('state')?.touched" 
+                class="absolute right-0 mt-1 text-xs text-white bg-red-600 px-2 py-1 rounded shadow z-10"
+            >
+                State is required
+            </p>
         </div>
 
         <!-- Zipcode -->
@@ -69,30 +87,42 @@
             <input
                 class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400"
                 placeholder="Zip"
-                [(ngModel)]="data.zipcode"
+                formControlName="zipcode"
             />
         </div>
     </div>
 
     <!-- Budget -->
-    <div class="md:col-span-2">
+    <div class="md:col-span-2 relative">
         <label class="block text-white font-medium text-base mb-1">Floral Budget*</label>
         <input
             type="number"
             class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400"
             placeholder="Example: $3500"
-            [(ngModel)]="data.budget"
+            formControlName="budget"
         />
+        <p 
+            *ngIf="getControl('budget')?.invalid && getControl('budget')?.touched" 
+            class="absolute right-0 mt-1 text-xs text-white bg-red-600 px-2 py-1 rounded shadow z-10"
+        >
+            Floral budget is required
+        </p>
     </div>
 
     <!-- Message -->
-    <div class="md:col-span-2">
+    <div class="md:col-span-2 relative">
         <label class="block text-white font-medium text-base mb-1">Tell Us About the Event*</label>
         <textarea
-        class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 h-32 resize-none"
-        placeholder="Share any details you'd like us to know..."
-        [(ngModel)]="data.notes"
+            class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 h-32 resize-none"
+            placeholder="Share any details you'd like us to know..."
+            formControlName="notes"
         ></textarea>
+        <p 
+            *ngIf="getControl('notes')?.invalid && getControl('notes')?.touched" 
+            class="absolute right-0 mt-1 text-xs text-white bg-red-600 px-2 py-1 rounded shadow z-10"
+        >
+            Notes are required
+        </p>
     </div>
 </div>
 
