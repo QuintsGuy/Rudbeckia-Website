@@ -23,10 +23,25 @@
 
         <!-- Step Content -->
         <ng-container [ngSwitch]="step">
-            <app-step-client *ngSwitchCase="1" [data]="formData.client"></app-step-client>
-            <app-step-event *ngSwitchCase="2" [data]="formData.event"></app-step-event>
-            <app-step-coordinator *ngSwitchCase="3" [data]="formData.coordinator"></app-step-coordinator>
-            <app-step-pinterest *ngSwitchCase="4" [data]="formData.pinterest"></app-step-pinterest>
+            <app-step-client
+                *ngSwitchCase="1"
+                [formGroup]="clientForm"
+            ></app-step-client>
+
+            <app-step-event
+                *ngSwitchCase="2"
+                [formGroup]="eventForm"
+            ></app-step-event>
+
+            <app-step-coordinator
+                *ngSwitchCase="3"
+                [formGroup]="coordinatorForm"
+            ></app-step-coordinator>
+
+            <app-step-pinterest
+                *ngSwitchCase="4"
+                [formGroup]="pinterestForm"
+            ></app-step-pinterest>
         </ng-container>
 
         <!-- Navigation -->

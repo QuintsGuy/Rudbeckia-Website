@@ -48,9 +48,9 @@
                         <!-- Row -->
                         <tr class="hover:bg-[#f9f4f2] cursor-pointer" (click)="toggleExpand(invoice)">
                             <td class="px-6 py-4 font-medium">{{ invoice.event.client.first_name }} {{invoice.event.client.last_name}}</td>
-                            <td class="px-6 py-4">{{ invoice.event.event_type | titlecase }}</td>
+                            <td class="px-6 py-4">{{ invoice.event.type | titlecase }}</td>
                             <td class="px-6 py-4">{{ invoice.event.venue | titlecase }}</td>
-                            <td class="px-6 py-4">{{ invoice.event.event_date | date: 'MMMM d y' }}</td>
+                            <td class="px-6 py-4">{{ invoice.event.date | date: 'MMMM d y' }}</td>
                             <td class="px-6 py-4">{{ invoice.total | currency:'USD':'symbol':'1.0-0' }}</td>
                         </tr>
 

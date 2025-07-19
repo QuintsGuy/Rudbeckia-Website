@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { SupabaseService } from '../../../services/supabase.service';
 import { ToastService } from '../../../services/toast.service';
 import { CommonModule } from '@angular/common';
-import { Form, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { StepClientComponent } from "./step-client/step-client.component";
 import { StepEventComponent } from "./step-event/step-event.component";
 import { StepCoordinatorComponent } from "./step-coordinator/step-coordinator.component";
@@ -12,37 +12,90 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-inquiries',
   standalone: true,
-  imports: [CommonModule, FormsModule, StepClientComponent, StepEventComponent, StepCoordinatorComponent, StepPinterestComponent, ReactiveFormsModule],
+  imports: [
+    CommonModule, 
+    FormsModule, 
+    StepClientComponent, 
+    StepEventComponent, 
+    StepCoordinatorComponent, 
+    StepPinterestComponent, 
+    ReactiveFormsModule
+  ],
   templateUrl: './inquiries.component.html',
   styleUrl: './inquiries.component.css'
 })
-export class InquiriesComponent {  
+export class InquiriesComponent {   
+  step = 1;
+  form: FormGroup;
+  
   constructor(
     private supabase: SupabaseService, 
     private toast: ToastService,
-    private router: Router
-  ) {}
-  
-  step = 1;
+    private router: Router,
+    private fb: FormBuilder
+  ) {
+    this.form = this.fb.group({
+      client: this.fb.group({
+        first_name: ['', Validators.required],
+        last_name: ['', Validators.required],
+        email: ['', [Validators.required, Validators.email]],
+        phone: ['', Validators.required],
+        address: ['', Validators.required],
+        city: ['', Validators.required],
+        state: ['', Validators.required],
+        zipcode: ['', Validators.required],
+        preferred_contact: ['', Validators.required] 
+      }),
+      event: this.fb.group({
+        date: ['', Validators.required],
+        type: ['', Validators.required],
+        venue: [''],
+        city: [''],
+        state: [''],
+        zipcode: [''],
+        budget: ['', Validators.required],
+        notes: ['', Validators.required]
+      }),
+      coordinator: this.fb.group({
+        first_name: [''],
+        last_name: [''],
+        email: [''],
+        phone: ['']
+      }),
+      pinterest: this.fb.group({
+        urls: this.fb.control([]),
+        images: this.fb.control([])
+      })
+    })
+  }
 
-  formData = {
-    client: {
-      first_name: '', last_name: '', email: '', phone: '',
-      address: '', city: '', state: '', zipcode: '', preferred_contact: ''
-    },
-    event: {
-      date: '', type: '', venue: '', city: '', state: '', zipcode: '',
-      budget: '', notes: ''
-    },
-    coordinator: {
-      first_name: '', last_name: '', email: '', phone: ''
-    },
-    pinterest: {
-      urls: [] as string[], images: [] as File[] // image files to upload
-    }
-  };
+  get clientForm(): FormGroup {
+    return this.form.get('client') as FormGroup;
+  }
+
+  get eventForm(): FormGroup {
+    return this.form.get('event') as FormGroup;
+  }
+
+  get coordinatorForm(): FormGroup {
+    return this.form.get('coordinator') as FormGroup;
+  }
+
+  get pinterestForm(): FormGroup {
+    return this.form.get('pinterest') as FormGroup;
+  }
 
   nextStep() {
+    const stepKeys = ['client', 'event', 'coordinator', 'pinterest'];
+    const currentKey = stepKeys[this.step - 1];
+    const currentGroup = this.form.get(currentKey) as FormGroup;
+
+    if (currentGroup.invalid) {
+      currentGroup.markAllAsTouched();
+      this.toast.showToast('Please fill in all required fields.', 'error');
+      return;
+    }
+    
     if (this.step < 4) this.step++;
   }
 
@@ -51,34 +104,38 @@ export class InquiriesComponent {
   }
 
   async submit() {
+    const { client, coordinator, event, pinterest } = this.form.value;
+    
     try {      
       // 1. Insert client
-      const { data: client, error: clientError } = await this.supabase.getClient()
+      const { data: clientData, error: clientError } = await this.supabase.getClient()
         .from('clients')
-        .upsert( this.formData.client , { onConflict: 'email' })
+        .upsert( client , { onConflict: 'email' })
         .select('*')
         .single();
+
       if (clientError) throw clientError;
 
       // 2. Insert coordinator (optional)
-      let coordinator = null;
-      if (this.formData.coordinator.email) {
-        const { data: coord, error: coordError } = await this.supabase.getClient()
+      let coordinatorData = null;
+      if (coordinator.email) {
+        const { data: coordData, error: coordError } = await this.supabase.getClient()
           .from('coordinators')
-          .upsert(this.formData.coordinator, { onConflict: 'email' })
+          .upsert(coordinator, { onConflict: 'email' })
           .select('*')
           .single();
+
         if (coordError) throw coordError;
-        coordinator = coord;
+        coordinatorData = coordData;
       }
       
       // 3. Insert event
-      const { data: event, error: eventError } = await this.supabase.getClient()
+      const { data: eventData, error: eventError } = await this.supabase.getClient()
         .from('events')
         .insert({
-          ...this.formData.event,
-          client_id: client.client_id,
-          coordinator_id: coordinator?.coordinator_id || null
+          ...event,
+          client_id: clientData.client_id,
+          coordinator_id: coordinatorData?.coordinator_id || null
         })
         .select()
         .single();
@@ -87,7 +144,7 @@ export class InquiriesComponent {
       const eventId = event.event_id;
 
       // 2. Upload any image files from Pinterest
-      for (const file of this.formData.pinterest.images) {
+      for (const file of pinterest.images) {
         const { error: fileError } = await this.supabase.getClient().storage
           .from('pinterest-inspo')
           .upload(`${eventId}/${file.name}`, file);
@@ -95,9 +152,9 @@ export class InquiriesComponent {
         if (fileError) throw fileError;
       }
 
-      const urlRecords = this.formData.pinterest.urls
-        .filter(url => !!url.trim())
-        .map(url => ({ event_id: eventId, url }));
+      const urlRecords = pinterest.urls
+        .filter((url: string) => !!url.trim())
+        .map((url: string) => ({ event_id: eventId, url }));
 
       if (urlRecords.length > 0) {
         const { error: urlError } = await this.supabase.getClient()
@@ -107,8 +164,15 @@ export class InquiriesComponent {
         if (urlError) throw urlError;
       }
 
-      const fullName = `${client.first_name} ${client.last_name}`;
-      this.sendInquiryEmails(client.email, fullName, client.phone, event.type, event.date, event.venue, event.notes);
+      this.sendInquiryEmails(
+        client.email, 
+        `${client.first_name} ${client.last_name}`, 
+        client.phone, 
+        event.type, 
+        event.date, 
+        event.venue, 
+        event.notes
+      );
 
       this.toast.showToast('Inquiry submitted successfully!', 'success');
       this.step = 1;

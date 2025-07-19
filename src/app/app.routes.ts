@@ -15,8 +15,6 @@ import { UserManagementComponent } from './components/private/user-management/us
 import { PasswordRecoveryComponent } from './components/auth/password-recovery/password-recovery.component';
 import { CalendarComponent } from './components/private/calendar/calendar.component';
 import { ProposalComponent } from './components/view/proposals/proposal.component';
-import { ManageAboutComponent } from './components/private/manage-about/manage-about.component';
-import { ManageServicesComponent } from './components/private/manage-services/manage-services.component';
 import { ManageSettingsComponent } from './components/private/manage-settings/manage-settings.component';
 import { EventsComponent } from './components/private/events/events.component';
 import { PasscodeComponent } from './components/auth/passcode/passcode.component';
@@ -64,10 +62,8 @@ export const routes: Routes = [
         children: [
             { path: 'dashboard', component: DashboardComponent },
             { path: 'calendar', component: CalendarComponent },
-            { path: 'about', component: ManageAboutComponent },
             { path: 'portfolio', component: ManagePortfolioComponent },
             { path: 'reviews', component: ManageReviewsComponent },
-            { path: 'services', component: ManageServicesComponent },
             { path: 'users', component: UserManagementComponent },
             { path: 'settings', component: ManageSettingsComponent },
             { path: 'events', component: EventsComponent },

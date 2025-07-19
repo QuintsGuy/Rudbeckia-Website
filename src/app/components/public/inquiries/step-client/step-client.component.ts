@@ -1,16 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-step-client',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './step-client.component.html',
   styleUrl: './step-client.component.css'
 })
 export class StepClientComponent {
   @Input() data: any;
+  @Input() formGroup!: FormGroup;
+
+  getControl(name: string) {
+    return this.formGroup.get(name);
+  }
 
   states: string[] = [
     'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut',

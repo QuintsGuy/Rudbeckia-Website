@@ -1,21 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-step-pinterest',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './step-pinterest.component.html',
   styleUrl: './step-pinterest.component.css'
 })
 export class StepPinterestComponent implements OnInit, OnDestroy {
-  @Input() data: { urls: string[]; images: File[] } = { urls: [''], images: [] };
+  @Input() formGroup!: FormGroup;
   previewUrls: string[] = [];
 
   ngOnInit() {
-    if (!this.data.urls || this.data.urls.length === 0) {
-      this.data.urls = [''];
+    const urls = this.formGroup.get('urls')?.value;
+    if (!urls || urls.length === 0) {
+      this.formGroup.patchValue({ urls: [''] });
     }
   }
 
@@ -28,25 +29,35 @@ export class StepPinterestComponent implements OnInit, OnDestroy {
   }
 
   addPinterestUrl() {
-    this.data.urls.push('');
+    const urls = this.formGroup.get('urls')?.value || [];
+    urls.push('');
+    this.formGroup.patchValue({ urls });
   }
 
   removePinterestUrl(index: number) {
-    this.data.urls.splice(index, 1);
+    const urls = this.formGroup.get('urls')?.value || [];
+    urls.splice(index, 1);
+    this.formGroup.patchValue({ urls });
   }
 
   handleFileInput(event: Event) {
     const files = (event.target as HTMLInputElement)?.files;
     if (files) {
       const newFiles = Array.from(files);
-      this.data.images.push(...newFiles);
+      const currentImages = this.formGroup.get('images')?.value || [];
+      this.formGroup.patchValue({
+        images: [...currentImages, ...newFiles]
+      });
       this.previewUrls.push(...newFiles.map(file => URL.createObjectURL(file)));
     }
   }
 
   removeImage(index: number) {
+    const currentImages = this.formGroup.get('images')?.value || [];
+    currentImages.splice(index, 1);
+    this.formGroup.patchValue({ images: currentImages });
+    
     URL.revokeObjectURL(this.previewUrls[index]);
-    this.data.images.splice(index, 1);
     this.previewUrls.splice(index, 1);
   }
 }

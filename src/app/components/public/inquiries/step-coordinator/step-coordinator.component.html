@@ -5,7 +5,7 @@
     </p>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm md:text-md text-gray-700">
+<div [formGroup]="formGroup" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm md:text-md text-gray-700">
 
     <!-- First Name -->
     <div>
@@ -13,7 +13,7 @@
         <input
             class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400"
             placeholder="Enter coordinator's first name"
-            [(ngModel)]="data.first_name"
+            formControlName="first_name"
         />
     </div>
 
@@ -23,7 +23,7 @@
         <input
             class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400"
             placeholder="Enter last name"
-            [(ngModel)]="data.last_name"
+            formControlName="last_name"
         />
     </div>
 
@@ -34,7 +34,7 @@
             type="email"
             class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400"
             placeholder="coordinator@example.com"
-            [(ngModel)]="data.email"
+            formControlName="email"
         />
     </div>
 
@@ -45,7 +45,7 @@
             type="tel"
             class="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400"
             placeholder="(123) 456-7890"
-            [(ngModel)]="data.phone"
+            formControlName="phone"
         />
     </div>
 </div>
