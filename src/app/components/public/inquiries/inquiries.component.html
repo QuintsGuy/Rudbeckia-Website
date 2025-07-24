@@ -1,4 +1,4 @@
-<div class="min-h-screen flex items-center justify-center px-6 py-10 font-serif mx-auto bg-center bg-cover bg-no-repeat bg-gray-400 bg-blend-multiply" style="background-image: url('assets/images/landing/IMG_0706.JPG');">
+<div class="min-h-screen flex items-center justify-center px-5 py-10 font-serif mx-auto bg-center bg-cover bg-no-repeat bg-gray-400 bg-blend-multiply" style="background-image: url('assets/images/landing/IMG_0706.JPG');">
 
     <div class="hidden xl:flex 2xl:w-2/5 items-center justify-end p-6">
         <div class="flex flex-col">
@@ -7,11 +7,11 @@
         </div>
     </div>
 
-    <div class="w-full bg-[#d49b79] bg-opacity-80 p-6 md:p-8 rounded-2xl shadow-xl max-w-3xl font-lora mx-auto mt-[100px] md:mt-10">
-        <h2 class="text-4xl md:text-5xl font-display text-white mb-6 text-center">Let's Get Started</h2>
+    <div class="w-full bg-[#d49b79] bg-opacity-80 p-5 md:p-8 rounded-2xl shadow-xl max-w-3xl font-lora mx-auto mt-10">
+        <h2 class="text-4xl md:text-5xl font-display text-white mb-6 mt-4 text-center">Let's Get Started</h2>
 
         <!-- Step Indicators (optional) -->
-        <div class="flex justify-center mb-6 font-light text-sm md:text-lg space-x-2 md:space-x-4 text-white">
+        <div class="flex justify-center mb-3 font-light text-sm md:text-lg space-x-2 md:space-x-4 text-white">
             <span [ngClass]="step === 1 ? 'font-extrabold' : 'opacity-70'">Client</span>
             <span>•</span>
             <span [ngClass]="step === 2 ? 'font-extrabold' : 'opacity-70'">Event</span>
@@ -45,7 +45,7 @@
         </ng-container>
 
         <!-- Navigation -->
-        <div class="flex justify-between mt-8">
+        <div class="flex justify-between mt-4 md:mt-8">
             <button *ngIf="step > 1"
                     class="px-4 py-2 bg-[#b66a53] w-[100px] text-white border-2 border-white rounded-lg hover:bg-[#9a5845]"
                     (click)="prevStep()">Back</button>
