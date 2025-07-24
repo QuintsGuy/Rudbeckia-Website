@@ -20,6 +20,7 @@ import { EventsComponent } from './components/private/events/events.component';
 import { PasscodeComponent } from './components/auth/passcode/passcode.component';
 import { StripeComponent } from './components/view/stripe/stripe.component';
 import { TermsAndConditionsComponent } from './components/public/terms-and-conditions/terms-and-conditions.component';
+import { PrivacyPolicyComponent } from './components/public/privacy-policy/privacy-policy.component';
 import { PaymentsComponent } from './components/view/payments/payments.component';
 import { PaymentSuccessComponent } from './components/view/payment-success/payment-success.component';
 import { PaymentCancelComponent } from './components/view/payment-cancel/payment-cancel.component';
@@ -43,6 +44,7 @@ export const routes: Routes = [
             { path: 'inquiries', component: InquiriesComponent },
             { path: 'password-recovery', component: PasswordRecoveryComponent},
             { path: 'terms-and-conditions', component: TermsAndConditionsComponent},
+            { path: 'privacy-policy', component: PrivacyPolicyComponent},
             { path: 'inquiries/success', component: SuccessComponent},
         ]
     },
